@@ -1,0 +1,125 @@
+{
+  "id": "Level01",
+  "index": 1,
+  "title": "First Contact",
+  "sparkStart": {
+    "x": 50,
+    "y": 180
+  },
+  "vesperStart": {
+    "x": 50,
+    "y": 100
+  },
+  "sparkPortal": {
+    "position": {
+      "x": 400,
+      "y": 200
+    },
+    "radius": 30
+  },
+  "vesperPortal": {
+    "position": {
+      "x": 400,
+      "y": 100
+    },
+    "radius": 30
+  },
+  "windmills": [
+    {
+      "position": {
+        "x": 200,
+        "y": 200
+      },
+      "linkIndex": 1,
+      "threshold": 0.3
+    }
+  ],
+  "bridges": [
+    {
+      "origin": {
+        "x": 150,
+        "y": 140
+      },
+      "maxWidth": 100,
+      "linkIndex": 1
+    }
+  ],
+  "heatPlates": [
+    {
+      "position": {
+        "x": 350,
+        "y": 180
+      },
+      "radius": 35,
+      "linkIndex": 2
+    }
+  ],
+  "iceWalls": [
+    {
+      "position": {
+        "x": 300,
+        "y": 100
+      },
+      "size": {
+        "width": 50,
+        "height": 80
+      },
+      "linkIndex": 2,
+      "meltTime": 2.5
+    }
+  ],
+  "surgeBarriers": [],
+  "flowBarriers": [],
+  "resonancePads": [],
+  "hazards": [
+    {
+      "type": "void",
+      "position": {
+        "x": 250,
+        "y": 120
+      },
+      "size": {
+        "width": 120,
+        "height": 200
+      }
+    }
+  ],
+  "tuning": {
+    "targetTime": 45,
+    "checkpoints": [
+      {
+        "x": 200,
+        "y": 150
+      }
+    ],
+    "hintTriggers": [
+      {
+        "failCount": 2,
+        "timeStuck": 15,
+        "hint": "Generate wind to extend the bridge"
+      },
+      {
+        "failCount": 4,
+        "timeStuck": 25,
+        "hint": "Stand on the heat plate to melt the ice"
+      },
+      {
+        "failCount": 6,
+        "timeStuck": 40,
+        "hint": "Coordinate timing between both worlds"
+      }
+    ],
+    "mechanicTeaching": {
+      "windPowerThreshold": 30,
+      "heatMeltRate": 0.4,
+      "refreezeRate": 0.12,
+      "bridgeExtendSpeed": 60,
+      "vesperFriction": 0.92,
+      "sparkDragRadius": 60,
+      "proximityGlowThreshold": 0.75,
+      "surgeDecayRate": 0.995,
+      "flowDecayRate": 0.99,
+      "proximityMaxRange": 150
+    }
+  }
+}

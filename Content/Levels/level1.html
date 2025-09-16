@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Spark & Vesper — Level 1 (iOS Optimized)</title>
+
+<!-- (Optional) App Icons / Splash (replace with your actual assets) -->
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png">
+<link rel="apple-touch-startup-image" href="splash/iphone.png" media="(orientation: portrait)">
+
+<style>
+  :root { --pad: max(12px, env(safe-area-inset-left)); --padR: max(12px, env(safe-area-inset-right)); --padT: max(12px, env(safe-area-inset-top)); --padB: max(12px, env(safe-area-inset-bottom)); }
+  html, body { margin:0; height:100%; background:#06070a; color:#e8ecff; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; overflow:hidden; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
+  body { padding: var(--padT) var(--padR) var(--padB) var(--pad); }
+  #canvas { display:block; width:100vw; height:100vh; touch-action:none; }
+
+  /* HUD + UI */
+  #hud {
+    position: fixed; left: calc(12px + env(safe-area-inset-left)); top: calc(12px + env(safe-area-inset-top));
+    display:flex; gap:10px; align-items:center; font-size:14px; opacity:.95; background:#0a0c1a99;
+    padding:8px 12px; border-radius:10px; border:1px solid #6a73ff22; backdrop-filter: blur(6px); pointer-events:none; z-index:3;
+  }
+  .pill { padding:2px 8px; border-radius:40px; border:1px solid #ffffff22; background:#ffffff0f; font-size:12px; margin-left:6px; }
+
+  #hint {
+    position: fixed; bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 50%; transform: translateX(-50%);
+    background: #0a0c1a99; border:1px solid #6a73ff22; padding: 10px 14px; border-radius: 12px;
+    font-size: 14px; opacity:.95; pointer-events:none; max-width: calc(100vw - 32px); z-index:3;
+  }
+
+  #ui { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none; z-index:4;}
+  .card {
+    pointer-events:auto; display:flex; flex-direction:column; gap:18px; align-items:center; text-align:center; max-width:720px; padding:24px;
+    background: radial-gradient(100% 100% at 50% 0%, #12152d, #0a0b17 70%); border-radius:16px; border:1px solid #5e67ff33;
+    box-shadow: 0 24px 60px #000c, inset 0 0 80px #99a2ff11;
+  }
+  .btn {
+    background: linear-gradient(180deg, #3a3f82, #1f2250);
+    border: 1px solid #6a73ff77; border-radius: 12px; padding: 14px 22px; font-weight:700; letter-spacing:.4px;
+    box-shadow: 0 8px 24px #0008, inset 0 0 20px #99a2ff22; cursor:pointer; transition: transform .08s ease;
+  }
+  .btn:active { transform: scale(.98); }
+  .subtitle { opacity:.85; font-weight:500; }
+
+  /* virtual joystick */
+  #stick {
+    position: fixed; bottom: calc(12vh + env(safe-area-inset-bottom)); left: calc(12vw + env(safe-area-inset-left));
+    width:120px; height:120px; border-radius:50%;
+    border:1px dashed #ffb36a66; background: radial-gradient(circle at 50% 50%, #1b1106CC, #0b070233);
+    box-shadow: inset 0 0 40px #ffb36a18; display:none; pointer-events:none; z-index:2;
+  }
+  #nub {
+    position:absolute; width:54px; height:54px; left:33px; top:33px; border-radius:50%;
+    background: radial-gradient(#ffcf9b, #ff913000); border:1px solid #ffca8a66; box-shadow:0 6px 20px #110, inset 0 0 24px #ffc98a99;
+  }
+
+  /* codex */
+  #codex {
+    position: fixed; right: calc(12px + env(safe-area-inset-right)); top: calc(12px + env(safe-area-inset-top));
+    background:#0a0c1a99; border:1px solid #86e3ff33; border-radius:10px; padding:10px 12px;
+    font-size:12px; max-width:40ch; line-height:1.25; display:none; z-index:3;
+  }
+  #codex header { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+  #codex button { background:#2a2f5a; color:#e8ecff; border:1px solid #5360ff55; border-radius:8px; padding:4px 8px; cursor:pointer; font-size:12px; }
+
+  .amethyst { text-shadow: 0 0 10px rgba(183,82,255,.8); box-shadow: 0 0 20px rgba(160,32,240,.35); }
+
+  /* iPad sizing polish */
+  @media (min-width: 768px) and (max-width: 1024px) { #hud { font-size:16px; padding:12px 16px; } .btn { padding:18px 28px; } }
+  @media (min-width:1025px) and (max-width:1366px) { #hud { font-size:18px; padding:14px 20px; } .btn { padding:20px 32px; font-size:18px; } }
+  @media (min-width:1367px) { #hud { font-size:20px; padding:16px 24px; } .btn { padding:22px 36px; font-size:20px; } }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div id="hud">Level 1: <strong style="margin-left:6px;">The Split</strong>
+  <span class="pill">Spark: WASD / Left side</span>
+  <span class="pill">Vesper: Arrows / Right side</span>
+  <span class="pill">Double‑tap: Dash/Freeze</span>
+</div>
+<div id="hint">Hold pads to open doors for the <em>other</em>. Trade places, then enter your portals together.</div>
+
+<div id="ui">
+  <div class="card" id="menu">
+    <h1>SPARK & VESPER</h1>
+    <div class="subtitle">Two echoes. One world. Help each other without touching.</div>
+    <div style="opacity:.8;font-size:14px">Spark = left joystick / WASD. Vesper = tap & hold (right). Double‑tap: Spark dash / Vesper freeze.</div>
+    <button class="btn" id="startBtn">Begin Level</button>
+  </div>
+  <div class="card" id="win" style="display:none">
+    <h2 class="amethyst">Resonance Achieved</h2>
+    <div class="subtitle">You traded places and moved as one.</div>
+    <button class="btn" onclick="location.reload()">Play Again</button>
+  </div>
+</div>
+
+<div id="stick"><div id="nub"></div></div>
+
+<div id="codex">
+  <header>
+    <strong>Codex — Alex // 01</strong>
+    <div><button id="codexToggle">Hide</button></div>
+  </header>
+  <div id="codexBody" style="opacity:.9;">
+    <em>"If you can hear this, I didn't drown. Look under the lighthouse."</em>
+  </div>
+</div>
+
+<script>
+(() => {
+  // =========================
+  // Canvas & DPR
+  // =========================
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d', { alpha:false });
+  let DPR = Math.max(1, window.devicePixelRatio || 1);
+  function resize(){ DPR=Math.max(1, window.devicePixelRatio||1); canvas.width=Math.floor(innerWidth*DPR); canvas.height=Math.floor(innerHeight*DPR); }
+  addEventListener('resize', resize, {passive:true}); resize();
+  const TAU = Math.PI*2, clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,t)=>a+(b-a)*t;
+
+  // iOS performance knobs
+  let P_MAX = 400; // particle ceiling (throttled on old devices)
+  const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+  const isOldish = /\b(iPhone (6|7|8|SE)|iPad(4|5|6))\b/i.test(navigator.userAgent);
+  if (isiOS && isOldish) P_MAX = 220;
+
+  // =========================
+  // Tiles & Level
+  // =========================
+  const TILE = {EMPTY:0, WALL:1, SWALL:2, VWALL:3, SSWT:4, VDOOR:5, VSWT:6, SDOOR:7, P_SP:8, P_VE:9, SHARD:10};
+  const mapStr = [
+    "########################",
+    "#..........S....=.....P#",
+    "#..###..#####..###..####",
+    "#..#..............#....#",
+    "#..#..A.....#.....#..V.#",
+    "#..#..###..s#..###..#..#",
+    "#..#......###......#...#",
+    "#..####..#####..####...#",
+    "#p.....=....v..........#",
+    "########################"
+  ];
+  const H=mapStr.length, W=mapStr[0].length, grid=[];
+  for(let y=0;y<H;y++){ const row=[]; for(let x=0;x<W;x++){ const ch=mapStr[y][x]; let t=0;
+    if(ch==='#')t=TILE.WALL; else if(ch==='S')t=TILE.SWALL; else if(ch==='V')t=TILE.VWALL;
+    else if(ch==='=')t=TILE.VDOOR; else if(ch==='s')t=TILE.SSWT; else if(ch==='v')t=TILE.VSWT;
+    else if(ch==='P')t=TILE.P_SP; else if(ch==='p')t=TILE.P_VE; else if(ch==='A')t=TILE.SHARD;
+    row.push(t);
+  } grid.push(row); }
+
+  // special tiles
+  const doorsV=[], doorsS=[], switchesS=[], switchesV=[];
+  let portalS={x:0,y:0}, portalV={x:0,y:0}, shard={x:0,y:0, taken:false, armed:false};
+  for (let y=0;y<H;y++) for (let x=0;x<W;x++){
+    const t=grid[y][x];
+    if(t===TILE.VDOOR) doorsV.push({x,y});
+    if(t===TILE.SDOOR) doorsS.push({x,y});
+    if(t===TILE.SSWT) switchesS.push({x,y});
+    if(t===TILE.VSWT) switchesV.push({x,y});
+    if(t===TILE.P_SP) portalS={x,y};
+    if(t===TILE.P_VE) portalV={x,y};
+    if(t===TILE.SHARD) shard={x,y,taken:false,armed:false};
+  }
+
+  // =========================
+  // Camera
+  // =========================
+  let cam={x:W/2,y:H/2, scale:42}; // initial tile size
+  const TILE_MIN=34, TILE_MAX=60;
+  function computeCamera(){
+    const mx=(spark.x+vesper.x)/2, my=(spark.y+vesper.y)/2;
+    const dx=Math.abs(spark.x-vesper.x), dy=Math.abs(vesper.y-spark.y);
+    const margin=3.2;
+    const needW=dx+margin, needH=dy+margin;
+    const sx=(canvas.width/DPR)/needW, sy=(canvas.height/DPR)/needH;
+    const ts=clamp(Math.min(sx,sy), TILE_MIN, TILE_MAX);
+    const halfW=(canvas.width/DPR)/(ts*2), halfH=(canvas.height/DPR)/(ts*2);
+    cam.scale = lerp(cam.scale, ts, 0.12);
+    cam.x = lerp(cam.x, clamp(mx, halfW, W-halfW), 0.12);
+    cam.y = lerp(cam.y, clamp(my, halfH, H-halfH), 0.12);
+  }
+  function worldToScreen(wx,wy){ const ts=cam.scale; const px=(wx-cam.x)*ts + (canvas.width/DPR)/2; const py=(wy-cam.y)*ts + (canvas.height/DPR)/2; return {x:px*DPR,y:py*DPR}; }
+
+  // =========================
+  // Player
+  // =========================
+  class Player{
+    constructor(kind,x,y){ this.kind=kind; this.x=x; this.y=y; this.vx=0; this.vy=0; this.r=.36;
+      this.baseSpeed=(kind==='spark')?5.2:4.6; this.speed=this.baseSpeed; this.accel=(kind==='spark')?22:18; this.drag=8.5;
+      this.glow=0; this.trail=[]; this.dashCD=0; this.freezeT=0;
+    }
+    accelToward(ax,ay){ this.vx+=ax*this.accel*dt; this.vy+=ay*this.accel*dt; }
+    physics(){
+      // decay dash/freeze
+      this.dashCD = Math.max(0, this.dashCD - dt);
+      if (this.freezeT>0){ this.freezeT-=dt; this.speed=3.2; this.drag=14; } else { this.speed=this.baseSpeed; this.drag=8.5; }
+
+      this.vx = lerp(this.vx, 0, clamp(this.drag*dt,0,1));
+      this.vy = lerp(this.vy, 0, clamp(this.drag*dt,0,1));
+      const m=this.speed, s2=this.vx*this.vx+this.vy*this.vy;
+      if(s2>m*m){ const s=Math.sqrt(s2); this.vx*=m/s; this.vy*=m/s; }
+      const steps=3, sx=this.vx*dt/steps, sy=this.vy*dt/steps;
+      for(let i=0;i<steps;i++){ this.move(sx,0); this.move(0,sy); }
+      this.glow = lerp(this.glow, Math.min(1, Math.sqrt(s2)/this.speed), 0.12);
+      this.trail.push({x:this.x, y:this.y, a:.55+.45*this.glow, t:perf});
+      if(this.trail.length>48) this.trail.shift();
+    }
+    move(dx,dy){
+      let nx=this.x+dx, ny=this.y+dy, r=this.r;
+      const minx=Math.floor(nx-r-.01), maxx=Math.floor(nx+r+.01);
+      const miny=Math.floor(ny-r-.01), maxy=Math.floor(ny+r+.01);
+      for(let ty=miny;ty<=maxy;ty++) for(let tx=minx;tx<=maxx;tx++){
+        if(tx<0||ty<0||tx>=W||ty>=H){ nx=clamp(nx,r,W-1-r); ny=clamp(ny,r,H-1-r); continue; }
+        let t=grid[ty][tx];
+        if(t===TILE.VDOOR && doorVOpen) t=TILE.EMPTY;
+        if(t===TILE.SDOOR && doorSOpen) t=TILE.EMPTY;
+        let solid=false;
+        if(t===TILE.WALL) solid=true;
+        if(t===TILE.SWALL && this.kind==='vesper') solid=true;  // S walls block Vesper
+        if(t===TILE.VWALL && this.kind==='spark') solid=true;   // V walls block Spark
+        if(t===TILE.VDOOR && this.kind==='spark' && !doorVOpen) solid=true;  // V doors block Spark when closed
+        if(t===TILE.SDOOR && this.kind==='vesper' && !doorSOpen) solid=true; // S doors block Vesper when closed
+        if(solid){
+          const ax=tx+.5, ay=ty+.5, half=.5;
+          const cx=clamp(nx, ax-half+r, ax+half-r);
+          const cy=clamp(ny, ay-half+r, ay+half-r);
+          const dx2=nx-cx, dy2=ny-cy, d2=dx2*dx2+dy2*dy2;
+          if(d2<1e-4){ if(Math.abs(dx)>Math.abs(dy)) nx=(dx>0)?(tx-r):(tx+1+r); else ny=(dy>0)?(ty-r):(ty+1+r);
+            if(Math.abs(dx)>0) this.vx*=-.2; if(Math.abs(dy)>0) this.vy*=-.2;
+          } else { const d=Math.sqrt(d2), pen=this.r-d; if(pen>0){ const nxn=dx2/d, nyn=dy2/d; nx+=nxn*pen; ny+=nyn*pen;
+              this.vx -= nxn * (this.vx*nxn + this.vy*nyn) * 1.2;
+              this.vy -= nyn * (this.vx*nxn + this.vy*nyn) * 1.2; } }
+        }
+      }
+      this.x=nx; this.y=ny;
+    }
+    draw(){
+      const ts=cam.scale; const p=worldToScreen(this.x,this.y);
+      ctx.save(); ctx.translate(p.x,p.y);
+      // aura
+      ctx.shadowBlur = ts*1.2*(.4+.6*this.glow);
+      ctx.shadowColor = (this.kind==='spark')?'rgba(255,166,66,0.6)':'rgba(183,82,255,0.6)';
+      ctx.globalAlpha=.95; ctx.beginPath(); ctx.arc(0,0,this.r*ts*1.35*DPR,0,TAU); ctx.fillStyle='rgba(255,255,255,0.06)'; ctx.fill();
+
+      // core
+      const grad = ctx.createRadialGradient(0,0,0,0,0,this.r*ts*DPR);
+      if(this.kind==='spark'){ grad.addColorStop(0,'#ffd8a1'); grad.addColorStop(.6,'#ff9b3f'); grad.addColorStop(1,'rgba(255,115,0,0.1)'); }
+      else { grad.addColorStop(0,'#e8c8ff'); grad.addColorStop(.6,'#b752ff'); grad.addColorStop(1,'rgba(160,32,240,0.08)'); }
+      ctx.shadowBlur = ts*.7; ctx.shadowColor=(this.kind==='spark')?'#ffb25a':'#b752ff';
+      ctx.beginPath(); ctx.arc(0,0,this.r*ts*DPR,0,TAU); ctx.fillStyle=grad; ctx.fill();
+
+      // trail
+      ctx.globalAlpha=.7;
+      for(let i=0;i<this.trail.length;i+=2){
+        const t=this.trail[i], age=clamp((perf-t.t)/600,0,1);
+        const ex=(t.x-this.x)*ts*DPR, ey=(t.y-this.y)*ts*DPR, fade=(1-age)*t.a;
+        ctx.beginPath(); ctx.arc(ex,ey,this.r*ts*DPR*(.35+i/this.trail.length*.28),0,TAU);
+        ctx.fillStyle=(this.kind==='spark')?`rgba(255,164,72,${0.16*fade})`:`rgba(183,82,255,${0.16*fade})`; ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  const spawnS={x:2.5,y:1.9}, spawnV={x:17.5,y:4.9};
+  const spark=new Player('spark',spawnS.x,spawnS.y);
+  const vesper=new Player('vesper',spawnV.x,spawnV.y);
+
+  // =========================
+  // Input (Keys / Stick / Magnet / Gestures / Pencil)
+  // =========================
+  const keys={}; addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;}); addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
+
+  const stickEl=document.getElementById('stick'), nubEl=document.getElementById('nub');
+  let stickActive=false, stickId=null, stickBase={x:0,y:0}, stickVec={x:0,y:0};
+  let magnetActive=false, magnetId=null, magnetPos={x:0,y:0};
+
+  // Gesture state (double‑tap, swipe)
+  const gestures={ lastTap:0, dblMs:300, swipeStart:null };
+  function onTap(x,y){
+    const now=Date.now();
+    if(now-gestures.lastTap < gestures.dblMs){
+      // double‑tap: left side -> spark dash, right side -> vesper freeze
+      if(x < innerWidth*0.5) sparkDash(); else vesperFreeze();
+      iosHaptic('impact'); gestures.lastTap = 0; return;
+    }
+    gestures.lastTap = now;
+  }
+  function sparkDash(){
+    if(spark.dashCD>0) return;
+    const dir = (()=>{ // dash in current movement direction or toward stick
+      let dx=stickVec.x, dy=stickVec.y;
+      if(Math.hypot(dx,dy)<0.2){ dx=spark.vx; dy=spark.vy; }
+      const n=Math.hypot(dx,dy)||1; return {x:dx/n,y:dy/n};
+    })();
+    const impulse=9.2; spark.vx += dir.x*impulse; spark.vy += dir.y*impulse;
+    spark.dashCD = 0.85; burst(spark.x,spark.y,'#ffb36a',18,3); tone(740,.08,'sine',.05);
+  }
+  function vesperFreeze(){ vesper.freezeT=0.85; burst(vesper.x,vesper.y,'#b752ff',14,2.2); tone(520,.09,'triangle',.05); }
+
+  // Touch (left=stick, right=magnet). Also detect taps & swipes.
+  const touchStart=(e)=>{ for(const t of e.changedTouches){ const x=t.clientX, y=t.clientY;
+    onTap(x,y);
+    if(x<innerWidth*0.5 && !stickActive){ stickActive=true; stickId=t.identifier; stickBase={x,y}; stickEl.style.display='block'; stickEl.style.left=(x-60)+'px'; stickEl.style.top=(y-60)+'px'; stickVec={x:0,y:0}; }
+    else if(!magnetActive){ magnetActive=true; magnetId=t.identifier; magnetPos={x,y}; }
+    gestures.swipeStart = {x,y};
+  }};
+  const touchMove=(e)=>{ for(const t of e.changedTouches){ const x=t.clientX, y=t.clientY;
+    if(stickActive && t.identifier===stickId){ const dx=x-stickBase.x, dy=y-stickBase.y; const maxR=44; const d=Math.hypot(dx,dy); const k=d>maxR?(maxR/d):1; stickVec={x:dx*k/maxR, y:dy*k/maxR}; nubEl.style.left=(33+stickVec.x*44)+'px'; nubEl.style.top=(33+stickVec.y*44)+'px'; }
+    else if(magnetActive && t.identifier===magnetId){ magnetPos={x,y}; }
+  }};
+  const endStick=()=>{ stickActive=false; stickId=null; stickVec={x:0,y:0}; stickEl.style.display='none'; };
+  const endMagnet=()=>{ magnetActive=false; magnetId=null; };
+  const touchEnd=(e)=>{ for(const t of e.changedTouches){ const x=t.clientX, y=t.clientY;
+    if(stickActive&&t.identifier===stickId) endStick();
+    if(magnetActive&&t.identifier===magnetId) endMagnet();
+    // swipe gesture
+    if(gestures.swipeStart){ const dx=x-gestures.swipeStart.x, dy=y-gestures.swipeStart.y;
+      if(Math.hypot(dx,dy)>60){ if(Math.abs(dx)>Math.abs(dy)){ if(dx>0) iosHaptic('tap'); else iosHaptic('tap'); } else { iosHaptic('tap'); } }
+      gestures.swipeStart=null;
+    }
+  }};
+  addEventListener('touchstart',touchStart,{passive:false});
+  addEventListener('touchmove',touchMove,{passive:false});
+  addEventListener('touchend',touchEnd,{passive:true});
+  addEventListener('touchcancel',touchEnd,{passive:true});
+
+  // Mouse fallback
+  let mouseDown=false, mouseLeft=true;
+  addEventListener('mousedown',e=>{ mouseDown=true; onTap(e.clientX,e.clientY);
+    if(e.clientX<innerWidth*0.5){ mouseLeft=true; stickActive=true; stickId='mouse'; stickBase={x:e.clientX,y:e.clientY}; stickEl.style.display='block'; stickEl.style.left=(e.clientX-60)+'px'; stickEl.style.top=(e.clientY-60)+'px'; }
+    else { mouseLeft=false; magnetActive=true; magnetId='mouse'; magnetPos={x:e.clientX,y:e.clientY}; }
+  });
+  addEventListener('mousemove',e=>{ if(!mouseDown)return;
+    if(mouseLeft&&stickActive){ const dx=e.clientX-stickBase.x, dy=e.clientY-stickBase.y; const maxR=44; const d=Math.hypot(dx,dy); const k=d>maxR?(maxR/d):1; stickVec={x:dx*k/maxR, y:dy*k/maxR}; nubEl.style.left=(33+stickVec.x*44)+'px'; nubEl.style.top=(33+stickVec.y*44)+'px'; }
+    else if(!mouseLeft&&magnetActive){ magnetPos={x:e.clientX,y:e.clientY}; }
+  });
+  addEventListener('mouseup',()=>{ mouseDown=false; if(stickActive&&stickId==='mouse')endStick(); if(magnetActive&&magnetId==='mouse')endMagnet(); });
+
+  // Apple Pencil precision via Pointer Events (pen only)
+  addEventListener('pointermove', (e)=>{
+    if(e.pointerType==='pen'){ magnetActive=true; magnetId='pen';
+      magnetPos={x:e.clientX, y:e.clientY};
+      // pressure‑sensitive Vesper speed
+      vesper.baseSpeed = 3.8 + (clamp(e.pressure||0,0,1) * 2.4);
+    }
+  });
+
+  // =========================
+  // Audio + Haptics + GC bridge
+  // =========================
+  let AC=null; function initAudio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch{} } }
+  function tone(freq=440,dur=.12,type='sine',gain=.05){ if(!AC)return; const t=AC.currentTime; const o=AC.createOscillator(), g=AC.createGain(); o.type=type; o.frequency.value=freq; g.gain.value=gain; o.connect(g).connect(AC.destination); o.start(t); o.stop(t+dur); }
+  function haptic(ms=15){ if(navigator.vibrate){ try{ navigator.vibrate(ms); }catch{} } }
+  function iosHaptic(type='tap'){
+    // Native bridge if available
+    try{
+      if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.hapticController) {
+        webkit.messageHandlers.hapticController.postMessage(type);
+        return;
+      }
+    }catch{}
+    // Fallback
+    haptic(type==='success'?30: type==='impact'?20:10);
+  }
+
+  const gameCenter = {
+    isAuthenticated:false,
+    setAuthenticated(v){ this.isAuthenticated=!!v; },
+    authenticate(){ try{ if(window.webkit?.messageHandlers?.gameCenterAuth){ webkit.messageHandlers.gameCenterAuth.postMessage("authenticate"); } }catch{} },
+    submitScore(levelId, score){ if(!this.isAuthenticated) return; try{ webkit.messageHandlers.gameCenterSubmit.postMessage(JSON.stringify({level:levelId,score})); }catch{} },
+    unlockAchievement(id){ if(!this.isAuthenticated) return; try{ webkit.messageHandlers.gameCenterAchievement.postMessage(id); }catch{} }
+  };
+  // Allow native to flip auth
+  window.gameCenterSetAuth = (flag)=> gameCenter.setAuthenticated(!!flag);
+
+  // =========================
+  // Particles
+  // =========================
+  const particles=[];
+  function spawnParticle(x,y,vx,vy,life,color,size){ if(particles.length>P_MAX) particles.shift(); particles.push({x,y,vx,vy,life,ttl:life,color,size}); }
+  function burst(x,y,color='#b752ff',count=18,speed=2.2){ for(let i=0;i<count;i++){ const a=Math.random()*TAU, v=speed*(.4+Math.random()*1.1), s=1+Math.random()*1.5; spawnParticle(x,y,Math.cos(a)*v,Math.sin(a)*v,520+Math.random()*320,color,s); } }
+  function updateParticles(){ for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.life-=dt*1000; if(p.life<=0){ particles.splice(i,1); continue; } p.x+=p.vx*dt; p.y+=p.vy*dt; p.vx*=0.98; p.vy*=0.98; } }
+  function drawParticles(){ const ts=cam.scale; for(const p of particles){ const a=p.life/p.ttl; const s=worldToScreen(p.x,p.y); ctx.globalAlpha=.2+.8*a; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(s.x,s.y,p.size*ts*0.06*DPR,0,TAU); ctx.fill(); } ctx.globalAlpha=1; }
+
+  // =========================
+  // State
+  // =========================
+  let doorVOpen=false, doorSOpen=false;
+  let started=false, won=false, last=performance.now(), perf=last, dt=0;
+  let progS=0, progV=0, lockSpeed=1.7;
+  let levelStartTime = 0;
+
+  function speak(text){ try{ const u=new SpeechSynthesisUtterance(text); u.rate=1; u.pitch=1; u.volume=.85; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch{} }
+
+  const startBtn=document.getElementById('startBtn');
+  startBtn.addEventListener('click',()=>{
+    started=true; document.getElementById('menu').style.display='none';
+    initAudio(); tone(580,.08,'sine',.05); tone(880,.1,'sine',.05); iosHaptic('tap');
+    gameCenter.authenticate(); levelStartTime = performance.now();
+  }, {passive:true});
+
+  const codexEl=document.getElementById('codex');
+  const codexToggle=document.getElementById('codexToggle');
+  codexToggle.addEventListener('click',()=>{ const body=document.getElementById('codexBody'); if(body.style.display==='none'){ body.style.display='block'; codexToggle.textContent='Hide'; } else { body.style.display='none'; codexToggle.textContent='Show'; }});
+
+  // Helpers
+  function tileAt(x,y){ if(x<0||y<0||x>=W||y>=H) return TILE.WALL; return grid[y][x]; }
+  function onTile(p, tile){ const tx=Math.floor(p.x), ty=Math.floor(p.y); return tileAt(tx,ty)===tile; }
+  function nearCenter(p, tx,ty, r=.6){ const dx=p.x-(tx+.5), dy=p.y-(ty+.5); return (dx*dx+dy*dy)<r*r; }
+
+  // Rendering helpers
+  function drawRectTile(tx,ty, c1,c2, stroke='rgba(255,255,255,0.06)'){
+    const ts=cam.scale; const p=worldToScreen(tx,ty); const w=ts*DPR, h=ts*DPR;
+    const g=ctx.createLinearGradient(p.x,p.y, p.x,p.y+h); g.addColorStop(0,c1); g.addColorStop(1,c2);
+    ctx.fillStyle=g; ctx.fillRect(p.x,p.y, w,h);
+    ctx.strokeStyle=stroke; ctx.lineWidth=Math.max(1, ts*0.03*DPR); ctx.strokeRect(p.x+.5,p.y+.5, w-1, h-1);
+  }
+  function drawPad(tx,ty, who, active=false){
+    const ts=cam.scale; const c=worldToScreen(tx+.5,ty+.5);
+    ctx.save(); ctx.translate(c.x,c.y);
+    const pulse = active ? 1 + 0.08 * Math.sin(perf*0.012) : 1; ctx.scale(pulse,pulse);
+    const grad=ctx.createRadialGradient(0,0,0,0,0, ts*.45*DPR);
+    if(who==='spark'){ grad.addColorStop(0,'#ffd8a1'); grad.addColorStop(1,'#ff9b3f22'); } else { grad.addColorStop(0,'#e8c8ff'); grad.addColorStop(1,'#b752ff22'); }
+    ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(0,0, ts*.36*DPR, 0, TAU); ctx.fill();
+    ctx.strokeStyle=(who==='spark')?'#ffb36a88':'#b752ff88'; ctx.lineWidth=ts*0.06*DPR; ctx.beginPath(); ctx.arc(0,0, ts*.44*DPR, 0, TAU); ctx.stroke();
+    if(active){ ctx.globalAlpha=.35; ctx.strokeStyle='#b752ff'; ctx.lineWidth=ts*0.04*DPR; ctx.beginPath(); ctx.arc(0,0, ts*.52*DPR,0,TAU); ctx.stroke(); ctx.globalAlpha=1; }
+    ctx.restore();
+  }
+  function drawDoor(tx,ty, who, open){
+    const c1=(who==='spark')?'#3a2a18':'#2a1540', c2=(who==='spark')?'#1b1209':'#1a0b21';
+    drawRectTile(tx,ty,c1,c2,(who==='spark')?'#ffb36a33':'#b752ff33');
+    if(!open){
+      const ts=cam.scale; const p=worldToScreen(tx,ty);
+      ctx.strokeStyle=(who==='spark')?'#ffb36a66':'#b752ff66'; ctx.lineWidth=ts*0.09*DPR;
+      ctx.beginPath(); ctx.moveTo(p.x+ts*0.22*DPR, p.y+ts*0.2*DPR); ctx.lineTo(p.x+ts*0.78*DPR, p.y+ts*0.8*DPR);
+      ctx.moveTo(p.x+ts*0.78*DPR, p.y+ts*0.2*DPR); ctx.lineTo(p.x+ts*0.22*DPR, p.y+ts*0.8*DPR); ctx.stroke();
+    }
+  }
+  function drawPortal(tx,ty, who, fillAmt){
+    const ts=cam.scale; const c=worldToScreen(tx+.5,ty+.5);
+    ctx.save(); ctx.translate(c.x,c.y);
+    for(let i=0;i<3;i++){
+      ctx.beginPath(); ctx.arc(0,0, ts*(.25+i*.1 + 0.02*Math.sin(perf*0.002 + i))*DPR, 0, TAU);
+      ctx.strokeStyle=(who==='spark')?`rgba(255,179,106,${.35-i*.1})`:`rgba(183,82,255,${.35-i*.1})`;
+      ctx.lineWidth=ts*0.05*DPR; ctx.stroke();
+    }
+    if(fillAmt>0){
+      ctx.beginPath(); ctx.arc(0,0, ts*.22*DPR, -Math.PI/2, -Math.PI/2 + TAU*fillAmt);
+      ctx.strokeStyle='#b752ff'; ctx.lineWidth=ts*0.12*DPR; ctx.globalAlpha=.85; ctx.stroke(); ctx.globalAlpha=1;
+    }
+    ctx.restore();
+  }
+  function drawShard(tx,ty){
+    const ts=cam.scale; const c=worldToScreen(tx+.5,ty+.5);
+    ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(Math.sin(perf*0.003)*0.15);
+    const g=ctx.createLinearGradient(-ts*.2*DPR,-ts*.2*DPR, ts*.2*DPR, ts*.2*DPR);
+    g.addColorStop(0,'#c8f5ff'); g.addColorStop(1,'#ffcf9b'); ctx.fillStyle=g; ctx.globalAlpha=.95;
+    ctx.beginPath(); ctx.moveTo(0,-ts*.23*DPR); ctx.lineTo(ts*.15*DPR,0); ctx.lineTo(0,ts*.23*DPR); ctx.lineTo(-ts*.12*DPR,0); ctx.closePath(); ctx.fill();
+    ctx.shadowBlur = ts*.8*DPR; ctx.shadowColor='#aef';
+    ctx.globalAlpha=.25; ctx.beginPath(); ctx.arc(0,0, ts*.4*DPR, 0, TAU); ctx.strokeStyle='#aef'; ctx.lineWidth=2; ctx.stroke();
+    ctx.restore();
+  }
+  function drawBeams(){
+    const ts=cam.scale;
+    if(doorVOpen){ for(const sw of switchesS) for(const d of doorsV) beam(sw.x+.5,sw.y+.5, d.x+.5,d.y+.5, 0.6); }
+    if(doorSOpen){ for(const sw of switchesV) for(const d of doorsS) beam(sw.x+.5,sw.y+.5, d.x+.5,d.y+.5, 0.6); }
+    function beam(x1,y1,x2,y2, alpha){
+      const a=alpha*(0.75+0.25*Math.sin(perf*0.02)); const p1=worldToScreen(x1,y1), p2=worldToScreen(x2,y2);
+      ctx.globalAlpha=a; ctx.strokeStyle='#b752ff'; ctx.lineWidth=ts*0.035*DPR; ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke(); ctx.globalAlpha=1;
+    }
+  }
+  function softGlow(x,y,r,col){ ctx.save(); ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.fill(); ctx.restore(); }
+
+  // =========================
+  // Update
+  // =========================
+  function update(){
+    // Spark controls (WASD or left stick)
+    let ax=0, ay=0;
+    if(stickActive){ ax+=stickVec.x; ay+=stickVec.y; }
+    if(keys['a']) ax-=1;
+    if(keys['d']) ax+=1;
+    if(keys['w']) ay-=1;
+    if(keys['s']) ay+=1;
+    const len=Math.hypot(ax,ay)||1; if(len>0){ ax/=len; ay/=len; spark.accelToward(ax,ay); }
+
+    // Vesper controls (Arrow keys or right side magnet)
+    let vx=0, vy=0;
+    if(keys['arrowleft']) vx-=1;
+    if(keys['arrowright']) vx+=1;
+    if(keys['arrowup']) vy-=1;
+    if(keys['arrowdown']) vy+=1;
+    const vlen=Math.hypot(vx,vy)||1; 
+    if(vlen>0){ vx/=vlen; vy/=vlen; vesper.accelToward(vx,vy); }
+    
+    // Vesper magnet (screen→world) - overrides keyboard if active
+    if(magnetActive){
+      const ts=cam.scale;
+      const wx = (magnetPos.x*DPR - (canvas.width/2) )/(ts) + cam.x;
+      const wy = (magnetPos.y*DPR - (canvas.height/2))/(ts) + cam.y;
+      const dx=wx - vesper.x, dy=wy - vesper.y, d=Math.hypot(dx,dy)||1;
+      const pull=clamp(9.5/d, .2, 2.4); vesper.accelToward(dx/d*pull, dy/d*pull);
+    }
+
+    spark.physics(); vesper.physics();
+
+    const prevV=doorVOpen, prevS=doorSOpen;
+    doorVOpen = onTile(spark, TILE.SSWT);
+    doorSOpen = onTile(vesper, TILE.VSWT);
+    if(doorVOpen && !prevV){ tone(660,.08,'triangle',.06); iosHaptic('tap'); beamSparks(switchesS, doorsV); }
+    if(doorSOpen && !prevS){ tone(520,.08,'triangle',.06); iosHaptic('tap'); beamSparks(switchesV, doorsS); }
+
+    // shard (arm near → tap to reveal; here we "auto‑tap" if armed & magnet active briefly)
+    if(!shard.taken){
+      const near = nearCenter(spark, shard.x, shard.y, .7) || nearCenter(vesper, shard.x, shard.y, .7);
+      if(near) shard.armed=true;
+      if(shard.armed && magnetActive && Math.random()<0.02){ collectShard(); }
+    }
+
+    // portal lock
+    const sIn = nearCenter(spark, portalS.x, portalS.y, .65);
+    const vIn = nearCenter(vesper, portalV.x, portalV.y, .65);
+    progS = clamp(progS + (sIn?lockSpeed*dt:-2.2*dt), 0, 1);
+    progV = clamp(progV + (vIn?lockSpeed*dt:-2.2*dt), 0, 1);
+
+    if(progS===1 && progV===1 && !won){
+      won=true; document.getElementById('win').style.display='flex';
+      tone(540,.09,'sine',.05); tone(740,.09,'sine',.05); tone(980,.15,'sine',.06); iosHaptic('success');
+      burst(portalS.x+.5, portalS.y+.5, '#ffb36a', 30, 2.6);
+      burst(portalV.x+.5, portalV.y+.5, '#86e3ff', 30, 2.6);
+      const t = Math.round((performance.now() - levelStartTime)/1000); // seconds
+      gameCenter.unlockAchievement("level_complete");
+      gameCenter.submitScore("level1_time", t);
+    }
+
+    updateParticles();
+    computeCamera();
+  }
+
+  function beamSparks(swArr, doorArr){
+    for(const s of swArr){
+      for(let i=0;i<6;i++){
+        const target = doorArr[Math.floor(Math.random()*doorArr.length)];
+        const midx = lerp(s.x+.5, target.x+.5, Math.random());
+        const midy = lerp(s.y+.5, target.y+.5, Math.random());
+        const ang=Math.random()*TAU, sp=2+Math.random()*2;
+        spawnParticle(midx,midy, Math.cos(ang)*sp, Math.sin(ang)*sp, 360+Math.random()*240, '#b752ff', 1+Math.random()*2);
+      }
+    }
+  }
+  function collectShard(){
+    shard.taken=true; tone(660,.12,'triangle',.06); tone(990,.18,'sine',.05); iosHaptic('impact');
+    try{ document.getElementById('codex').style.display='block'; }catch{}
+    speak("If you can hear this, I didn't drown. Look under the lighthouse.");
+    burst(shard.x+.5, shard.y+.5, '#b752ff', 22, 2.2);
+    gameCenter.unlockAchievement("first_shard");
+  }
+
+  // =========================
+  // Draw
+  // =========================
+  function drawBackground(){
+    const bg=ctx.createLinearGradient(0,0,0,canvas.height); bg.addColorStop(0,'#06070a'); bg.addColorStop(.6,'#0b0f23'); bg.addColorStop(1,'#0a0d1a');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,canvas.width,canvas.height);
+    const midx=(spark.x+vesper.x)/2, midy=(spark.y+vesper.y)/2, m=worldToScreen(midx,midy);
+    ctx.globalCompositeOperation='lighter';
+    softGlow(m.x,m.y, cam.scale*2.2*DPR, 'rgba(183,82,255,0.05)');
+    const sp=worldToScreen(spark.x,spark.y), ve=worldToScreen(vesper.x,vesper.y);
+    softGlow(sp.x,sp.y, cam.scale*1.8*DPR, 'rgba(255,182,92,0.05)');
+    softGlow(ve.x,ve.y, cam.scale*1.8*DPR, 'rgba(183,82,255,0.05)');
+    ctx.globalCompositeOperation='source-over';
+  }
+  function renderTiles(){
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){ const t=grid[y][x]; if(t===TILE.WALL) drawRectTile(x,y,'#161a33','#0f1224'); }
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){ const t=grid[y][x];
+      if(t===TILE.SWALL) drawRectTile(x,y,'#3a2a18','#1b1209','#ffb36a22');
+      if(t===TILE.VWALL) drawRectTile(x,y,'#2a1540','#1a0b21','#b752ff22');
+    }
+    for(const s of switchesS) drawPad(s.x,s.y,'spark', doorVOpen);
+    for(const s of switchesV) drawPad(s.x,s.y,'vesper', doorSOpen);
+    for(const d of doorsV) drawDoor(d.x,d.y,'vesper', doorVOpen);
+    for(const d of doorsS) drawDoor(d.x,d.y,'spark',  doorSOpen);
+    drawPortal(portalS.x, portalS.y, 'spark', progS);
+    drawPortal(portalV.x, portalV.y, 'vesper', progV);
+    if(!shard.taken) drawShard(shard.x,shard.y);
+  }
+  function render(){
+    drawBackground(); renderTiles(); drawBeams(); drawParticles(); spark.draw(); vesper.draw();
+  }
+
+  // =========================
+  // Main Loop (with iOS‑friendly render throttle if needed)
+  // =========================
+  let lastRender=0; const targetHz = (window.screen && screen.maxFPS && screen.maxFPS>60) ? 90 : 60;
+  const renderInterval = 1000/targetHz;
+
+  function frame(now){
+    perf=now; dt=clamp((now-last)/1000,0,1/20); last=now;
+    if(started && !won) update();
+
+    // throttle render if needed (older iOS)
+    if (!isiOS || !isOldish || now - lastRender >= renderInterval) { render(); lastRender = now; }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

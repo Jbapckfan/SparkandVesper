@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Spark & Vesper - Synaptic Echo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --spark-primary: #ff9343;
+            --spark-glow: #ffcc66;
+            --spark-core: #ffe4aa;
+            --vesper-primary: #936bff;
+            --vesper-glow: #66ccff;
+            --vesper-core: #c8b4ff;
+            --sync-green: #00ff88;
+            --danger-red: #ff3366;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #000;
+            overflow: hidden;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dimension {
+            position: relative;
+            width: 100%;
+            height: calc(50% - 2px);
+            overflow: hidden;
+        }
+
+        #sparkWorld {
+            background: linear-gradient(135deg, #2a1810 0%, #1a0f08 50%, #0a0505 100%);
+        }
+
+        #vesperWorld {
+            background: linear-gradient(135deg, #181028 0%, #0f0818 50%, #050510 100%);
+        }
+
+        .dimension-divider {
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                var(--spark-primary) 20%,
+                var(--sync-green) 50%,
+                var(--vesper-primary) 80%,
+                transparent 100%
+            );
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5),
+                        0 0 60px rgba(255, 147, 67, 0.3),
+                        inset 0 0 20px rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 100;
+            animation: dividerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dividerPulse {
+            0%, 100% { 
+                opacity: 0.8; 
+                height: 4px;
+            }
+            50% { 
+                opacity: 1; 
+                height: 6px;
+            }
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #levelTitle {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            pointer-events: none;
+            opacity: 0;
+            animation: titleReveal 3s ease-out;
+            z-index: 2000;
+            text-align: center;
+        }
+
+        #levelSubtitle {
+            position: fixed;
+            top: calc(50% + 50px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 4px;
+            color: var(--sync-green);
+            text-transform: uppercase;
+            pointer-events: none;
+            opacity: 0;
+            animation: titleReveal 3s 0.5s ease-out;
+            z-index: 2000;
+        }
+
+        @keyframes titleReveal {
+            0% {
+                opacity: 0;
+                letter-spacing: 20px;
+            }
+            50% {
+                opacity: 1;
+                letter-spacing: 8px;
+            }
+            100% {
+                opacity: 0;
+                letter-spacing: 8px;
+            }
+        }
+
+        .objective-indicator {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            z-index: 50;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .sync-status {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        .sync-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--sync-green), #00ffaa);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--sync-green);
+        }
+
+        #completionScreen {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, 
+                rgba(0, 40, 20, 0.98) 0%, 
+                #000 100%
+            );
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+
+        #completionScreen.show {
+            display: flex;
+        }
+
+        .completion-title {
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: 6px;
+            background: linear-gradient(90deg, var(--spark-glow), var(--vesper-glow));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            #levelTitle { font-size: 36px; }
+            .objective-indicator { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Level Title -->
+    <div id="levelTitle">Synaptic Echo</div>
+    <div id="levelSubtitle">Synchronize to Survive</div>
+
+    <!-- Spark's Dimension -->
+    <div class="dimension" id="sparkWorld">
+        <canvas id="sparkCanvas"></canvas>
+        <div class="objective-indicator">→ REACH EXIT PORTAL →</div>
+        <div class="sync-status">
+            <div class="sync-fill" id="syncBar"></div>
+        </div>
+    </div>
+
+    <!-- Dimension Divider -->
+    <div class="dimension-divider"></div>
+
+    <!-- Vesper's Dimension -->
+    <div class="dimension" id="vesperWorld">
+        <canvas id="vesperCanvas"></canvas>
+    </div>
+
+    <!-- Completion Screen -->
+    <div id="completionScreen">
+        <h2 class="completion-title">Level Complete</h2>
+    </div>
+
+    <script>
+        // Ultra Level 2 - Actually Playable This Time
+        class Level2Game {
+            constructor() {
+                this.state = 'playing';
+                this.frameCount = 0;
+                this.deltaTime = 0;
+                this.lastTime = 0;
+                
+                this.syncLevel = 0;
+                this.maxSyncLevel = 1;
+                this.syncDecayRate = 0.3;
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupCanvas();
+                this.setupWorlds();
+                this.setupInput();
+                this.startLevel();
+            }
+            
+            setupCanvas() {
+                this.sparkCanvas = document.getElementById('sparkCanvas');
+                this.vesperCanvas = document.getElementById('vesperCanvas');
+                
+                this.sparkCtx = this.sparkCanvas.getContext('2d', { alpha: false });
+                this.vesperCtx = this.vesperCanvas.getContext('2d', { alpha: false });
+                
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+            
+            resize() {
+                const rect1 = this.sparkCanvas.parentElement.getBoundingClientRect();
+                const rect2 = this.vesperCanvas.parentElement.getBoundingClientRect();
+                
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                
+                this.sparkCanvas.width = rect1.width * dpr;
+                this.sparkCanvas.height = rect1.height * dpr;
+                this.sparkCanvas.style.width = rect1.width + 'px';
+                this.sparkCanvas.style.height = rect1.height + 'px';
+                this.sparkCtx.scale(dpr, dpr);
+                
+                this.vesperCanvas.width = rect2.width * dpr;
+                this.vesperCanvas.height = rect2.height * dpr;
+                this.vesperCanvas.style.width = rect2.width + 'px';
+                this.vesperCanvas.style.height = rect2.height + 'px';
+                this.vesperCtx.scale(dpr, dpr);
+                
+                if (this.sparkWorld) {
+                    this.sparkWorld.resize(rect1.width, rect1.height);
+                    this.vesperWorld.resize(rect2.width, rect2.height);
+                }
+            }
+            
+            setupWorlds() {
+                const sparkBounds = this.sparkCanvas.parentElement.getBoundingClientRect();
+                const vesperBounds = this.vesperCanvas.parentElement.getBoundingClientRect();
+                
+                this.sparkWorld = new SparkWorld(sparkBounds.width, sparkBounds.height);
+                this.vesperWorld = new VesperWorld(vesperBounds.width, vesperBounds.height);
+            }
+            
+            setupInput() {
+                // Spark controls - drag
+                const setupSparkControls = (element) => {
+                    let dragging = false;
+                    
+                    const getPos = (e) => {
+                        const rect = element.getBoundingClientRect();
+                        if (e.touches) {
+                            return {
+                                x: e.touches[0].clientX - rect.left,
+                                y: e.touches[0].clientY - rect.top
+                            };
+                        }
+                        return {
+                            x: e.clientX - rect.left,
+                            y: e.clientY - rect.top
+                        };
+                    };
+                    
+                    const startDrag = (e) => {
+                        const pos = getPos(e);
+                        const dist = Math.hypot(
+                            pos.x - this.sparkWorld.spark.x,
+                            pos.y - this.sparkWorld.spark.y
+                        );
+                        
+                        if (dist < 50) {
+                            dragging = true;
+                            this.sparkWorld.spark.selected = true;
+                        }
+                    };
+                    
+                    const moveDrag = (e) => {
+                        if (!dragging) return;
+                        e.preventDefault();
+                        
+                        const pos = getPos(e);
+                        this.sparkWorld.spark.targetX = pos.x;
+                        this.sparkWorld.spark.targetY = pos.y;
+                    };
+                    
+                    const endDrag = () => {
+                        if (this.sparkWorld.spark) {
+                            this.sparkWorld.spark.selected = false;
+                        }
+                        dragging = false;
+                    };
+                    
+                    element.addEventListener('touchstart', startDrag, { passive: false });
+                    element.addEventListener('touchmove', moveDrag, { passive: false });
+                    element.addEventListener('touchend', endDrag);
+                    element.addEventListener('mousedown', startDrag);
+                    element.addEventListener('mousemove', moveDrag);
+                    element.addEventListener('mouseup', endDrag);
+                };
+                
+                // Vesper controls - flow
+                const setupVesperControls = (element) => {
+                    const setFlowTarget = (e) => {
+                        const rect = element.getBoundingClientRect();
+                        const pos = e.touches ? {
+                            x: e.touches[0].clientX - rect.left,
+                            y: e.touches[0].clientY - rect.top
+                        } : {
+                            x: e.clientX - rect.left,
+                            y: e.clientY - rect.top
+                        };
+                        
+                        this.vesperWorld.vesper.setFlowTarget(pos.x, pos.y);
+                    };
+                    
+                    element.addEventListener('click', setFlowTarget);
+                    element.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        setFlowTarget(e);
+                    }, { passive: false });
+                };
+                
+                setupSparkControls(this.sparkCanvas);
+                setupVesperControls(this.vesperCanvas);
+            }
+            
+            startLevel() {
+                this.loop();
+            }
+            
+            update(deltaTime) {
+                if (this.state !== 'playing') return;
+                
+                this.sparkWorld.update(deltaTime);
+                this.vesperWorld.update(deltaTime);
+                
+                // Check synchronization
+                const sparkOnSync = this.sparkWorld.checkSyncPlate();
+                const vesperOnSync = this.vesperWorld.checkSyncPlate();
+                
+                if (sparkOnSync && vesperOnSync) {
+                    this.syncLevel = Math.min(this.maxSyncLevel, this.syncLevel + deltaTime);
+                    
+                    // Activate synchronized mechanisms
+                    if (this.syncLevel > 0.3) {
+                        this.sparkWorld.activateSyncMechanisms(this.syncLevel);
+                        this.vesperWorld.activateSyncMechanisms(this.syncLevel);
+                    }
+                } else {
+                    this.syncLevel = Math.max(0, this.syncLevel - deltaTime * this.syncDecayRate);
+                }
+                
+                // Update sync bar
+                document.getElementById('syncBar').style.width = (this.syncLevel * 100) + '%';
+                
+                // Check completion
+                if (this.sparkWorld.reachedExit && this.vesperWorld.reachedExit) {
+                    this.state = 'complete';
+                    document.getElementById('completionScreen').classList.add('show');
+                }
+            }
+            
+            render() {
+                // Render worlds
+                this.sparkWorld.render(this.sparkCtx, this.syncLevel);
+                this.vesperWorld.render(this.vesperCtx, this.syncLevel);
+            }
+            
+            loop(currentTime = 0) {
+                if (this.lastTime === 0) {
+                    this.lastTime = currentTime;
+                    this.deltaTime = 0.016;
+                } else {
+                    this.deltaTime = Math.min((currentTime - this.lastTime) / 1000, 0.1);
+                    this.lastTime = currentTime;
+                }
+                
+                this.update(this.deltaTime);
+                this.render();
+                
+                if (this.state !== 'stopped') {
+                    requestAnimationFrame((t) => this.loop(t));
+                }
+            }
+        }
+        
+        // Spark World - Beautiful and Challenging
+        class SparkWorld {
+            constructor(width, height) {
+                this.width = width;
+                this.height = height;
+                this.spark = new Spark(60, height / 2);
+                this.particles = [];
+                this.backgroundParticles = [];
+                this.reachedExit = false;
+                
+                this.initLevel();
+                this.initBackgroundEffects();
+            }
+            
+            resize(width, height) {
+                this.width = width;
+                this.height = height;
+            }
+            
+            initLevel() {
+                // Visible sync plate with glow
+                this.syncPlate = {
+                    x: this.width * 0.25,
+                    y: this.height * 0.5,
+                    radius: 40,
+                    active: false,
+                    glow: 0,
+                    pulsePhase: 0
+                };
+                
+                // Deadly laser barriers (deactivate when synced)
+                this.lasers = [
+                    {
+                        x1: this.width * 0.4,
+                        y1: 0,
+                        x2: this.width * 0.4,
+                        y2: this.height,
+                        active: true,
+                        color: '#ff3366',
+                        width: 3,
+                        deadly: true
+                    },
+                    {
+                        x1: this.width * 0.6,
+                        y1: 0,
+                        x2: this.width * 0.6,
+                        y2: this.height * 0.7,
+                        active: true,
+                        color: '#ff3366',
+                        width: 3,
+                        deadly: true
+                    }
+                ];
+                
+                // Moving platforms
+                this.platforms = [
+                    {
+                        x: this.width * 0.5,
+                        y: this.height * 0.7,
+                        width: 80,
+                        height: 10,
+                        targetY: this.height * 0.3,
+                        currentY: this.height * 0.7,
+                        speed: 0,
+                        active: false,
+                        glow: 0
+                    }
+                ];
+                
+                // Collectible energy orbs (optional challenge)
+                this.energyOrbs = [
+                    {
+                        x: this.width * 0.3,
+                        y: this.height * 0.3,
+                        radius: 10,
+                        collected: false,
+                        rotation: 0
+                    },
+                    {
+                        x: this.width * 0.7,
+                        y: this.height * 0.6,
+                        radius: 10,
+                        collected: false,
+                        rotation: 0
+                    }
+                ];
+                
+                // Visible exit portal
+                this.exit = {
+                    x: this.width - 60,
+                    y: this.height / 2,
+                    radius: 30,
+                    active: false,
+                    rotation: 0,
+                    particles: []
+                };
+            }
+            
+            initBackgroundEffects() {
+                // Create floating ember particles
+                for (let i = 0; i < 30; i++) {
+                    this.backgroundParticles.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        vx: (Math.random() - 0.5) * 20,
+                        vy: -Math.random() * 30 - 10,
+                        size: Math.random() * 3 + 1,
+                        life: Math.random(),
+                        color: `hsl(${20 + Math.random() * 20}, 100%, ${50 + Math.random() * 30}%)`
+                    });
+                }
+            }
+            
+            checkSyncPlate() {
+                const dist = Math.hypot(
+                    this.spark.x - this.syncPlate.x,
+                    this.spark.y - this.syncPlate.y
+                );
+                
+                this.syncPlate.active = dist < this.syncPlate.radius;
+                return this.syncPlate.active;
+            }
+            
+            activateSyncMechanisms(syncLevel) {
+                // Deactivate lasers gradually
+                this.lasers.forEach(laser => {
+                    laser.active = syncLevel < 0.8;
+                });
+                
+                // Activate moving platforms
+                this.platforms.forEach(platform => {
+                    platform.active = true;
+                    platform.speed = syncLevel * 100;
+                });
+                
+                // Activate exit when fully synced
+                this.exit.active = syncLevel > 0.9;
+            }
+            
+            update(deltaTime) {
+                this.spark.update(deltaTime);
+                
+                // Update sync plate
+                if (this.syncPlate.active) {
+                    this.syncPlate.glow = Math.min(1, this.syncPlate.glow + deltaTime * 3);
+                    this.syncPlate.pulsePhase += deltaTime * 5;
+                } else {
+                    this.syncPlate.glow = Math.max(0, this.syncPlate.glow - deltaTime);
+                }
+                
+                // Update platforms
+                this.platforms.forEach(platform => {
+                    if (platform.active) {
+                        const dy = platform.targetY - platform.currentY;
+                        platform.currentY += dy * deltaTime * 2;
+                        platform.glow = Math.min(1, platform.glow + deltaTime * 2);
+                    }
+                });
+                
+                // Update energy orbs
+                this.energyOrbs.forEach(orb => {
+                    if (!orb.collected) {
+                        orb.rotation += deltaTime * 3;
+                        
+                        const dist = Math.hypot(
+                            this.spark.x - orb.x,
+                            this.spark.y - orb.y
+                        );
+                        
+                        if (dist < orb.radius + this.spark.radius) {
+                            orb.collected = true;
+                            this.createOrbBurst(orb.x, orb.y);
+                        }
+                    }
+                });
+                
+                // Check laser collisions
+                this.lasers.forEach(laser => {
+                    if (laser.active && laser.deadly) {
+                        const dist = this.pointToLineDistance(
+                            this.spark.x, this.spark.y,
+                            laser.x1, laser.y1, laser.x2, laser.y2
+                        );
+                        
+                        if (dist < this.spark.radius) {
+                            // Reset position (death)
+                            this.spark.x = 60;
+                            this.spark.y = this.height / 2;
+                            this.spark.targetX = 60;
+                            this.spark.targetY = this.height / 2;
+                            this.createDeathBurst(this.spark.x, this.spark.y);
+                        }
+                    }
+                });
+                
+                // Update exit
+                if (this.exit.active) {
+                    this.exit.rotation += deltaTime * 2;
+                    
+                    // Check if reached exit
+                    const exitDist = Math.hypot(
+                        this.spark.x - this.exit.x,
+                        this.spark.y - this.exit.y
+                    );
+                    
+                    if (exitDist < this.exit.radius) {
+                        this.reachedExit = true;
+                    }
+                    
+                    // Create exit particles
+                    if (Math.random() < 0.3) {
+                        this.exit.particles.push({
+                            angle: Math.random() * Math.PI * 2,
+                            radius: 0,
+                            life: 1
+                        });
+                    }
+                    
+                    this.exit.particles = this.exit.particles.filter(p => {
+                        p.radius += deltaTime * 50;
+                        p.life -= deltaTime;
+                        return p.life > 0;
+                    });
+                }
+                
+                // Update background particles
+                this.backgroundParticles.forEach(p => {
+                    p.x += p.vx * deltaTime;
+                    p.y += p.vy * deltaTime;
+                    
+                    if (p.y < -10) {
+                        p.y = this.height + 10;
+                        p.x = Math.random() * this.width;
+                    }
+                    
+                    if (p.x < 0) p.x = this.width;
+                    if (p.x > this.width) p.x = 0;
+                });
+                
+                // Update particles
+                this.particles = this.particles.filter(p => {
+                    p.x += p.vx * deltaTime;
+                    p.y += p.vy * deltaTime;
+                    p.vy += 200 * deltaTime;
+                    p.life -= deltaTime * 2;
+                    return p.life > 0;
+                });
+            }
+            
+            pointToLineDistance(px, py, x1, y1, x2, y2) {
+                const A = px - x1;
+                const B = py - y1;
+                const C = x2 - x1;
+                const D = y2 - y1;
+                
+                const dot = A * C + B * D;
+                const lenSq = C * C + D * D;
+                let param = -1;
+                
+                if (lenSq !== 0) param = dot / lenSq;
+                
+                let xx, yy;
+                
+                if (param < 0) {
+                    xx = x1;
+                    yy = y1;
+                } else if (param > 1) {
+                    xx = x2;
+                    yy = y2;
+                } else {
+                    xx = x1 + param * C;
+                    yy = y1 + param * D;
+                }
+                
+                const dx = px - xx;
+                const dy = py - yy;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+            
+            createOrbBurst(x, y) {
+                for (let i = 0; i < 20; i++) {
+                    const angle = (Math.PI * 2 * i) / 20;
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: Math.cos(angle) * 200,
+                        vy: Math.sin(angle) * 200,
+                        life: 1,
+                        size: 3,
+                        color: '#ffcc66'
+                    });
+                }
+            }
+            
+            createDeathBurst(x, y) {
+                for (let i = 0; i < 30; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 400,
+                        vy: (Math.random() - 0.5) * 400,
+                        life: 1,
+                        size: 4,
+                        color: '#ff3366'
+                    });
+                }
+            }
+            
+            render(ctx, syncLevel) {
+                // Clear with gradient background
+                const bgGradient = ctx.createLinearGradient(0, 0, 0, this.height);
+                bgGradient.addColorStop(0, '#2a1810');
+                bgGradient.addColorStop(0.5, '#1a0f08');
+                bgGradient.addColorStop(1, '#0a0505');
+                ctx.fillStyle = bgGradient;
+                ctx.fillRect(0, 0, this.width, this.height);
+                
+                // Render background grid pattern
+                ctx.strokeStyle = 'rgba(255, 147, 67, 0.05)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < this.width; x += 40) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, this.height);
+                    ctx.stroke();
+                }
+                for (let y = 0; y < this.height; y += 40) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(this.width, y);
+                    ctx.stroke();
+                }
+                
+                // Render background particles
+                this.backgroundParticles.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life * 0.5;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                ctx.globalAlpha = 1;
+                
+                // Render sync plate
+                this.renderSyncPlate(ctx);
+                
+                // Render lasers
+                this.lasers.forEach(laser => {
+                    if (laser.active) {
+                        // Laser glow
+                        ctx.strokeStyle = laser.color;
+                        ctx.lineWidth = laser.width + 10;
+                        ctx.globalAlpha = 0.3;
+                        ctx.beginPath();
+                        ctx.moveTo(laser.x1, laser.y1);
+                        ctx.lineTo(laser.x2, laser.y2);
+                        ctx.stroke();
+                        
+                        // Laser core
+                        ctx.lineWidth = laser.width;
+                        ctx.globalAlpha = 0.9;
+                        ctx.stroke();
+                        
+                        // Warning particles
+                        if (Math.random() < 0.1) {
+                            const t = Math.random();
+                            const px = laser.x1 + (laser.x2 - laser.x1) * t;
+                            const py = laser.y1 + (laser.y2 - laser.y1) * t;
+                            
+                            ctx.fillStyle = laser.color;
+                            ctx.globalAlpha = Math.random();
+                            ctx.beginPath();
+                            ctx.arc(px, py, Math.random() * 5, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                });
+                ctx.globalAlpha = 1;
+                
+                // Render platforms
+                this.platforms.forEach(platform => {
+                    // Platform glow
+                    if (platform.glow > 0) {
+                        ctx.fillStyle = `rgba(0, 255, 136, ${platform.glow * 0.2})`;
+                        ctx.fillRect(
+                            platform.x - platform.width/2 - 10,
+                            platform.currentY - 5,
+                            platform.width + 20,
+                            platform.height + 10
+                        );
+                    }
+                    
+                    // Platform body
+                    const platGradient = ctx.createLinearGradient(
+                        platform.x - platform.width/2, platform.currentY,
+                        platform.x + platform.width/2, platform.currentY
+                    );
+                    platGradient.addColorStop(0, '#443322');
+                    platGradient.addColorStop(0.5, '#665544');
+                    platGradient.addColorStop(1, '#443322');
+                    
+                    ctx.fillStyle = platGradient;
+                    ctx.fillRect(
+                        platform.x - platform.width/2,
+                        platform.currentY,
+                        platform.width,
+                        platform.height
+                    );
+                    
+                    // Edge highlights
+                    ctx.strokeStyle = platform.active ? '#00ff88' : '#665544';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(
+                        platform.x - platform.width/2,
+                        platform.currentY,
+                        platform.width,
+                        platform.height
+                    );
+                });
+                
+                // Render energy orbs
+                this.energyOrbs.forEach(orb => {
+                    if (!orb.collected) {
+                        // Orb glow
+                        const orbGlow = ctx.createRadialGradient(
+                            orb.x, orb.y, 0,
+                            orb.x, orb.y, orb.radius * 3
+                        );
+                        orbGlow.addColorStop(0, 'rgba(255, 204, 102, 0.6)');
+                        orbGlow.addColorStop(1, 'rgba(255, 204, 102, 0)');
+                        ctx.fillStyle = orbGlow;
+                        ctx.beginPath();
+                        ctx.arc(orb.x, orb.y, orb.radius * 3, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Orb core
+                        ctx.save();
+                        ctx.translate(orb.x, orb.y);
+                        ctx.rotate(orb.rotation);
+                        
+                        ctx.fillStyle = '#ffcc66';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, orb.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Inner detail
+                        ctx.fillStyle = '#ffe4aa';
+                        ctx.beginPath();
+                        ctx.arc(-3, -3, orb.radius * 0.4, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        ctx.restore();
+                    }
+                });
+                
+                // Render exit portal
+                if (this.exit.active || syncLevel > 0.5) {
+                    const alpha = this.exit.active ? 1 : syncLevel;
+                    
+                    // Portal vortex
+                    ctx.save();
+                    ctx.translate(this.exit.x, this.exit.y);
+                    ctx.rotate(this.exit.rotation);
+                    
+                    for (let i = 0; i < 8; i++) {
+                        ctx.rotate(Math.PI / 4);
+                        const gradient = ctx.createLinearGradient(0, 0, 0, -this.exit.radius * 2);
+                        gradient.addColorStop(0, `rgba(0, 255, 136, ${alpha * 0.3})`);
+                        gradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(-5, -this.exit.radius * 2);
+                        ctx.lineTo(5, -this.exit.radius * 2);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                    
+                    ctx.restore();
+                    
+                    // Portal ring
+                    ctx.strokeStyle = `rgba(0, 255, 136, ${alpha})`;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(this.exit.x, this.exit.y, this.exit.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    // Portal particles
+                    this.exit.particles.forEach(p => {
+                        ctx.fillStyle = `rgba(0, 255, 136, ${p.life * 0.5})`;
+                        ctx.beginPath();
+                        ctx.arc(
+                            this.exit.x + Math.cos(p.angle) * p.radius,
+                            this.exit.y + Math.sin(p.angle) * p.radius,
+                            3, 0, Math.PI * 2
+                        );
+                        ctx.fill();
+                    });
+                }
+                
+                // Render particles
+                this.particles.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                ctx.globalAlpha = 1;
+                
+                // Render Spark
+                this.spark.render(ctx);
+            }
+            
+            renderSyncPlate(ctx) {
+                const plate = this.syncPlate;
+                
+                // Outer glow
+                if (plate.glow > 0) {
+                    const glowGradient = ctx.createRadialGradient(
+                        plate.x, plate.y, plate.radius,
+                        plate.x, plate.y, plate.radius * 2
+                    );
+                    glowGradient.addColorStop(0, `rgba(0, 255, 136, ${plate.glow * 0.4})`);
+                    glowGradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
+                    ctx.fillStyle = glowGradient;
+                    ctx.beginPath();
+                    ctx.arc(plate.x, plate.y, plate.radius * 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Rotating rings
+                ctx.save();
+                ctx.translate(plate.x, plate.y);
+                ctx.rotate(plate.pulsePhase);
+                
+                ctx.strokeStyle = plate.active ? '#00ff88' : '#005533';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 3; i++) {
+                    ctx.globalAlpha = plate.active ? 0.8 - i * 0.2 : 0.3;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, plate.radius - i * 10, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                ctx.restore();
+                ctx.globalAlpha = 1;
+                
+                // Center core
+                const coreGradient = ctx.createRadialGradient(
+                    plate.x, plate.y, 0,
+                    plate.x, plate.y, plate.radius * 0.5
+                );
+                coreGradient.addColorStop(0, plate.active ? '#00ffaa' : '#003322');
+                coreGradient.addColorStop(1, plate.active ? '#00ff88' : '#002211');
+                ctx.fillStyle = coreGradient;
+                ctx.beginPath();
+                ctx.arc(plate.x, plate.y, plate.radius * 0.5, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Text hint
+                if (!plate.active) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.font = '12px Quicksand';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('SYNC', plate.x, plate.y - plate.radius - 10);
+                }
+            }
+        }
+        
+        // Spark Character
+        class Spark {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.targetX = x;
+                this.targetY = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.radius = 15;
+                this.trail = [];
+                this.selected = false;
+            }
+            
+            update(deltaTime) {
+                const dx = this.targetX - this.x;
+                const dy = this.targetY - this.y;
+                
+                this.vx += dx * deltaTime * 8;
+                this.vy += dy * deltaTime * 8;
+                
+                this.x += this.vx * deltaTime * 60;
+                this.y += this.vy * deltaTime * 60;
+                
+                this.vx *= 0.9;
+                this.vy *= 0.9;
+                
+                this.trail.push({ x: this.x, y: this.y, life: 1 });
+                if (this.trail.length > 20) this.trail.shift();
+                
+                this.trail.forEach(t => t.life *= 0.95);
+            }
+            
+            render(ctx) {
+                // Trail
+                ctx.strokeStyle = 'rgba(255, 147, 67, 0.3)';
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                this.trail.forEach((point, i) => {
+                    if (i === 0) ctx.moveTo(point.x, point.y);
+                    else {
+                        ctx.globalAlpha = point.life * 0.5;
+                        ctx.lineTo(point.x, point.y);
+                    }
+                });
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+                
+                // Glow layers
+                for (let i = 3; i > 0; i--) {
+                    const glowGradient = ctx.createRadialGradient(
+                        this.x, this.y, 0,
+                        this.x, this.y, this.radius * (1 + i * 0.4)
+                    );
+                    glowGradient.addColorStop(0, `rgba(255, 200, 100, ${0.2 / i})`);
+                    glowGradient.addColorStop(1, 'rgba(255, 147, 67, 0)');
+                    ctx.fillStyle = glowGradient;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius * (1 + i * 0.4), 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Core
+                const coreGradient = ctx.createRadialGradient(
+                    this.x - 3, this.y - 3, 0,
+                    this.x, this.y, this.radius
+                );
+                coreGradient.addColorStop(0, '#ffffff');
+                coreGradient.addColorStop(0.2, '#ffe4aa');
+                coreGradient.addColorStop(0.6, '#ffcc66');
+                coreGradient.addColorStop(1, '#ff9343');
+                
+                ctx.fillStyle = coreGradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Inner highlight
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.beginPath();
+                ctx.arc(this.x - 3, this.y - 3, this.radius * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Vesper World - Equally Beautiful and Challenging
+        class VesperWorld {
+            constructor(width, height) {
+                this.width = width;
+                this.height = height;
+                this.vesper = new Vesper(60, height / 2);
+                this.particles = [];
+                this.backgroundParticles = [];
+                this.reachedExit = false;
+                
+                this.initLevel();
+                this.initBackgroundEffects();
+            }
+            
+            resize(width, height) {
+                this.width = width;
+                this.height = height;
+            }
+            
+            initLevel() {
+                // Sync plate
+                this.syncPlate = {
+                    x: this.width * 0.75,
+                    y: this.height * 0.5,
+                    radius: 40,
+                    active: false,
+                    glow: 0,
+                    pulsePhase: 0
+                };
+                
+                // Spike hazards
+                this.spikes = [
+                    {
+                        x: this.width * 0.35,
+                        y: this.height * 0.8,
+                        width: 100,
+                        height: 20,
+                        active: true,
+                        deadly: true
+                    },
+                    {
+                        x: this.width * 0.5,
+                        y: this.height * 0.2,
+                        width: 80,
+                        height: 20,
+                        active: true,
+                        deadly: true
+                    }
+                ];
+                
+                // Disappearing platforms
+                this.platforms = [
+                    {
+                        x: this.width * 0.3,
+                        y: this.height * 0.5,
+                        width: 60,
+                        height: 10,
+                        opacity: 0.3,
+                        targetOpacity: 0.3,
+                        solid: false
+                    },
+                    {
+                        x: this.width * 0.5,
+                        y: this.height * 0.6,
+                        width: 60,
+                        height: 10,
+                        opacity: 0.3,
+                        targetOpacity: 0.3,
+                        solid: false
+                    }
+                ];
+                
+                // Crystal collectibles
+                this.crystals = [
+                    {
+                        x: this.width * 0.4,
+                        y: this.height * 0.3,
+                        size: 12,
+                        collected: false,
+                        rotation: 0
+                    },
+                    {
+                        x: this.width * 0.6,
+                        y: this.height * 0.7,
+                        size: 12,
+                        collected: false,
+                        rotation: 0
+                    }
+                ];
+                
+                // Exit portal
+                this.exit = {
+                    x: this.width - 60,
+                    y: this.height / 2,
+                    radius: 30,
+                    active: false,
+                    rotation: 0,
+                    particles: []
+                };
+            }
+            
+            initBackgroundEffects() {
+                // Floating motes
+                for (let i = 0; i < 30; i++) {
+                    this.backgroundParticles.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        vx: (Math.random() - 0.5) * 10,
+                        vy: (Math.random() - 0.5) * 10,
+                        size: Math.random() * 2 + 1,
+                        life: Math.random(),
+                        color: `hsl(${250 + Math.random() * 30}, 80%, ${40 + Math.random() * 30}%)`
+                    });
+                }
+            }
+            
+            checkSyncPlate() {
+                const dist = Math.hypot(
+                    this.vesper.x - this.syncPlate.x,
+                    this.vesper.y - this.syncPlate.y
+                );
+                
+                this.syncPlate.active = dist < this.syncPlate.radius;
+                return this.syncPlate.active;
+            }
+            
+            activateSyncMechanisms(syncLevel) {
+                // Make platforms solid
+                this.platforms.forEach(platform => {
+                    platform.targetOpacity = syncLevel;
+                    platform.solid = syncLevel > 0.5;
+                });
+                
+                // Deactivate spikes
+                this.spikes.forEach(spike => {
+                    spike.active = syncLevel < 0.7;
+                });
+                
+                // Activate exit
+                this.exit.active = syncLevel > 0.9;
+            }
+            
+            update(deltaTime) {
+                this.vesper.update(deltaTime);
+                
+                // Update sync plate
+                if (this.syncPlate.active) {
+                    this.syncPlate.glow = Math.min(1, this.syncPlate.glow + deltaTime * 3);
+                    this.syncPlate.pulsePhase += deltaTime * 5;
+                } else {
+                    this.syncPlate.glow = Math.max(0, this.syncPlate.glow - deltaTime);
+                }
+                
+                // Update platforms
+                this.platforms.forEach(platform => {
+                    const dOpacity = platform.targetOpacity - platform.opacity;
+                    platform.opacity += dOpacity * deltaTime * 2;
+                });
+                
+                // Update crystals
+                this.crystals.forEach(crystal => {
+                    if (!crystal.collected) {
+                        crystal.rotation += deltaTime * 2;
+                        
+                        const dist = Math.hypot(
+                            this.vesper.x - crystal.x,
+                            this.vesper.y - crystal.y
+                        );
+                        
+                        if (dist < crystal.size + this.vesper.radius) {
+                            crystal.collected = true;
+                            this.createCrystalBurst(crystal.x, crystal.y);
+                        }
+                    }
+                });
+                
+                // Check spike collisions
+                this.spikes.forEach(spike => {
+                    if (spike.active && spike.deadly) {
+                        if (this.vesper.x > spike.x - spike.width/2 &&
+                            this.vesper.x < spike.x + spike.width/2 &&
+                            this.vesper.y > spike.y - spike.height/2 &&
+                            this.vesper.y < spike.y + spike.height/2) {
+                            // Reset position
+                            this.vesper.x = 60;
+                            this.vesper.y = this.height / 2;
+                            this.vesper.flowTarget = null;
+                            this.createDeathBurst(this.vesper.x, this.vesper.y);
+                        }
+                    }
+                });
+                
+                // Update exit
+                if (this.exit.active) {
+                    this.exit.rotation -= deltaTime * 2;
+                    
+                    const exitDist = Math.hypot(
+                        this.vesper.x - this.exit.x,
+                        this.vesper.y - this.exit.y
+                    );
+                    
+                    if (exitDist < this.exit.radius) {
+                        this.reachedExit = true;
+                    }
+                    
+                    if (Math.random() < 0.3) {
+                        this.exit.particles.push({
+                            angle: Math.random() * Math.PI * 2,
+                            radius: 0,
+                            life: 1
+                        });
+                    }
+                    
+                    this.exit.particles = this.exit.particles.filter(p => {
+                        p.radius += deltaTime * 50;
+                        p.life -= deltaTime;
+                        return p.life > 0;
+                    });
+                }
+                
+                // Update background particles
+                this.backgroundParticles.forEach(p => {
+                    p.x += p.vx * deltaTime;
+                    p.y += p.vy * deltaTime;
+                    
+                    if (p.x < 0) p.x = this.width;
+                    if (p.x > this.width) p.x = 0;
+                    if (p.y < 0) p.y = this.height;
+                    if (p.y > this.height) p.y = 0;
+                });
+                
+                // Update particles
+                this.particles = this.particles.filter(p => {
+                    p.x += p.vx * deltaTime;
+                    p.y += p.vy * deltaTime;
+                    p.vy -= 100 * deltaTime;
+                    p.life -= deltaTime * 2;
+                    return p.life > 0;
+                });
+            }
+            
+            createCrystalBurst(x, y) {
+                for (let i = 0; i < 15; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 200,
+                        vy: -Math.random() * 200,
+                        life: 1,
+                        size: 3,
+                        color: '#66ccff'
+                    });
+                }
+            }
+            
+            createDeathBurst(x, y) {
+                for (let i = 0; i < 30; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 400,
+                        vy: (Math.random() - 0.5) * 400,
+                        life: 1,
+                        size: 4,
+                        color: '#ff3366'
+                    });
+                }
+            }
+            
+            render(ctx, syncLevel) {
+                // Background gradient
+                const bgGradient = ctx.createLinearGradient(0, 0, 0, this.height);
+                bgGradient.addColorStop(0, '#181028');
+                bgGradient.addColorStop(0.5, '#0f0818');
+                bgGradient.addColorStop(1, '#050510');
+                ctx.fillStyle = bgGradient;
+                ctx.fillRect(0, 0, this.width, this.height);
+                
+                // Background pattern
+                ctx.strokeStyle = 'rgba(147, 107, 255, 0.05)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 5; i++) {
+                    ctx.beginPath();
+                    const y = this.height * (i + 1) / 6;
+                    for (let x = 0; x < this.width; x += 5) {
+                        const wave = Math.sin(x * 0.02) * 20;
+                        if (x === 0) ctx.moveTo(x, y + wave);
+                        else ctx.lineTo(x, y + wave);
+                    }
+                    ctx.stroke();
+                }
+                
+                // Background particles
+                this.backgroundParticles.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life * 0.3;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                ctx.globalAlpha = 1;
+                
+                // Render sync plate
+                this.renderSyncPlate(ctx);
+                
+                // Render spikes
+                this.spikes.forEach(spike => {
+                    if (spike.active) {
+                        // Spike glow
+                        ctx.fillStyle = 'rgba(255, 51, 102, 0.2)';
+                        ctx.fillRect(
+                            spike.x - spike.width/2 - 5,
+                            spike.y - spike.height/2 - 5,
+                            spike.width + 10,
+                            spike.height + 10
+                        );
+                        
+                        // Spike triangles
+                        ctx.fillStyle = '#ff3366';
+                        const spikeCount = 5;
+                        const spikeWidth = spike.width / spikeCount;
+                        
+                        for (let i = 0; i < spikeCount; i++) {
+                            ctx.beginPath();
+                            const sx = spike.x - spike.width/2 + i * spikeWidth;
+                            ctx.moveTo(sx, spike.y);
+                            ctx.lineTo(sx + spikeWidth/2, spike.y - spike.height/2);
+                            ctx.lineTo(sx + spikeWidth, spike.y);
+                            ctx.closePath();
+                            ctx.fill();
+                        }
+                    }
+                });
+                
+                // Render platforms
+                this.platforms.forEach(platform => {
+                    ctx.fillStyle = `rgba(100, 70, 200, ${platform.opacity})`;
+                    ctx.fillRect(
+                        platform.x - platform.width/2,
+                        platform.y,
+                        platform.width,
+                        platform.height
+                    );
+                    
+                    if (platform.opacity > 0.5) {
+                        ctx.strokeStyle = `rgba(0, 255, 136, ${(platform.opacity - 0.5) * 0.6})`;
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(
+                            platform.x - platform.width/2,
+                            platform.y,
+                            platform.width,
+                            platform.height
+                        );
+                    }
+                });
+                
+                // Render crystals
+                this.crystals.forEach(crystal => {
+                    if (!crystal.collected) {
+                        // Crystal glow
+                        const crystalGlow = ctx.createRadialGradient(
+                            crystal.x, crystal.y, 0,
+                            crystal.x, crystal.y, crystal.size * 3
+                        );
+                        crystalGlow.addColorStop(0, 'rgba(102, 204, 255, 0.5)');
+                        crystalGlow.addColorStop(1, 'rgba(102, 204, 255, 0)');
+                        ctx.fillStyle = crystalGlow;
+                        ctx.beginPath();
+                        ctx.arc(crystal.x, crystal.y, crystal.size * 3, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Crystal shape
+                        ctx.save();
+                        ctx.translate(crystal.x, crystal.y);
+                        ctx.rotate(crystal.rotation);
+                        
+                        ctx.fillStyle = '#66ccff';
+                        ctx.beginPath();
+                        ctx.moveTo(0, -crystal.size);
+                        ctx.lineTo(crystal.size * 0.7, 0);
+                        ctx.lineTo(0, crystal.size);
+                        ctx.lineTo(-crystal.size * 0.7, 0);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        ctx.fillStyle = '#aaeeff';
+                        ctx.beginPath();
+                        ctx.moveTo(0, -crystal.size * 0.5);
+                        ctx.lineTo(crystal.size * 0.35, 0);
+                        ctx.lineTo(0, 0);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        ctx.restore();
+                    }
+                });
+                
+                // Render exit
+                if (this.exit.active || syncLevel > 0.5) {
+                    const alpha = this.exit.active ? 1 : syncLevel;
+                    
+                    // Portal vortex
+                    ctx.save();
+                    ctx.translate(this.exit.x, this.exit.y);
+                    ctx.rotate(this.exit.rotation);
+                    
+                    for (let i = 0; i < 6; i++) {
+                        ctx.rotate(Math.PI / 3);
+                        ctx.strokeStyle = `rgba(0, 255, 136, ${alpha * (0.5 + Math.sin(Date.now() * 0.003 + i) * 0.2)})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, this.exit.radius, 0, Math.PI / 3);
+                        ctx.stroke();
+                    }
+                    
+                    ctx.restore();
+                    
+                    // Portal ring
+                    ctx.strokeStyle = `rgba(0, 255, 136, ${alpha})`;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(this.exit.x, this.exit.y, this.exit.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    // Portal particles
+                    this.exit.particles.forEach(p => {
+                        ctx.fillStyle = `rgba(0, 255, 136, ${p.life * 0.5})`;
+                        ctx.beginPath();
+                        ctx.arc(
+                            this.exit.x + Math.cos(p.angle) * p.radius,
+                            this.exit.y + Math.sin(p.angle) * p.radius,
+                            3, 0, Math.PI * 2
+                        );
+                        ctx.fill();
+                    });
+                }
+                
+                // Render particles
+                this.particles.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                ctx.globalAlpha = 1;
+                
+                // Render Vesper
+                this.vesper.render(ctx);
+            }
+            
+            renderSyncPlate(ctx) {
+                const plate = this.syncPlate;
+                
+                // Outer glow
+                if (plate.glow > 0) {
+                    const glowGradient = ctx.createRadialGradient(
+                        plate.x, plate.y, plate.radius,
+                        plate.x, plate.y, plate.radius * 2
+                    );
+                    glowGradient.addColorStop(0, `rgba(0, 255, 136, ${plate.glow * 0.4})`);
+                    glowGradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
+                    ctx.fillStyle = glowGradient;
+                    ctx.beginPath();
+                    ctx.arc(plate.x, plate.y, plate.radius * 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Rotating rings
+                ctx.save();
+                ctx.translate(plate.x, plate.y);
+                ctx.rotate(-plate.pulsePhase);
+                
+                ctx.strokeStyle = plate.active ? '#00ff88' : '#005533';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 3; i++) {
+                    ctx.globalAlpha = plate.active ? 0.8 - i * 0.2 : 0.3;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, plate.radius - i * 10, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                ctx.restore();
+                ctx.globalAlpha = 1;
+                
+                // Center core
+                const coreGradient = ctx.createRadialGradient(
+                    plate.x, plate.y, 0,
+                    plate.x, plate.y, plate.radius * 0.5
+                );
+                coreGradient.addColorStop(0, plate.active ? '#00ffaa' : '#003322');
+                coreGradient.addColorStop(1, plate.active ? '#00ff88' : '#002211');
+                ctx.fillStyle = coreGradient;
+                ctx.beginPath();
+                ctx.arc(plate.x, plate.y, plate.radius * 0.5, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Text hint
+                if (!plate.active) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.font = '12px Quicksand';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('SYNC', plate.x, plate.y - plate.radius - 10);
+                }
+            }
+        }
+        
+        // Vesper Character
+        class Vesper {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.radius = 14;
+                this.flowTarget = null;
+                this.trail = [];
+            }
+            
+            setFlowTarget(x, y) {
+                this.flowTarget = { x, y, strength: 1 };
+            }
+            
+            update(deltaTime) {
+                if (this.flowTarget) {
+                    const dx = this.flowTarget.x - this.x;
+                    const dy = this.flowTarget.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist > 10) {
+                        this.vx += (dx / dist) * 100 * this.flowTarget.strength * deltaTime;
+                        this.vy += (dy / dist) * 100 * this.flowTarget.strength * deltaTime;
+                    } else {
+                        this.flowTarget.strength *= 0.9;
+                        if (this.flowTarget.strength < 0.1) {
+                            this.flowTarget = null;
+                        }
+                    }
+                }
+                
+                this.x += this.vx * deltaTime;
+                this.y += this.vy * deltaTime;
+                
+                this.vx *= 0.92;
+                this.vy *= 0.92;
+                
+                this.trail.push({ x: this.x, y: this.y, life: 1 });
+                if (this.trail.length > 25) this.trail.shift();
+                
+                this.trail.forEach(t => t.life *= 0.94);
+            }
+            
+            render(ctx) {
+                // Trail
+                ctx.strokeStyle = 'rgba(147, 107, 255, 0.3)';
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                this.trail.forEach((point, i) => {
+                    if (i === 0) ctx.moveTo(point.x, point.y);
+                    else {
+                        ctx.globalAlpha = point.life * 0.5;
+                        ctx.lineTo(point.x, point.y);
+                    }
+                });
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+                
+                // Glow layers
+                for (let i = 3; i > 0; i--) {
+                    const shadowGradient = ctx.createRadialGradient(
+                        this.x, this.y, 0,
+                        this.x, this.y, this.radius * (1 + i * 0.4)
+                    );
+                    shadowGradient.addColorStop(0, `rgba(147, 107, 255, ${0.15 / i})`);
+                    shadowGradient.addColorStop(1, 'rgba(147, 107, 255, 0)');
+                    ctx.fillStyle = shadowGradient;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius * (1 + i * 0.4), 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Core
+                const coreGradient = ctx.createRadialGradient(
+                    this.x + 2, this.y + 2, 0,
+                    this.x, this.y, this.radius
+                );
+                coreGradient.addColorStop(0, '#ffffff');
+                coreGradient.addColorStop(0.2, '#e4d4ff');
+                coreGradient.addColorStop(0.6, '#c8b4ff');
+                coreGradient.addColorStop(1, '#936bff');
+                
+                ctx.fillStyle = coreGradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Inner highlight
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.beginPath();
+                ctx.arc(this.x + 2, this.y - 2, this.radius * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Initialize game
+        const game = new Level2Game();
+        
+        // Prevent scrolling
+        document.addEventListener('touchmove', (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>

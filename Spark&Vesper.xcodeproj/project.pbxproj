@@ -6,6 +6,35 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D0C5F3D52E4C3917003DDFAB /* BridgeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3B82E4C385C003DDFAB /* BridgeNode.swift */; };
+		D0C5F3D62E4C3917003DDFAB /* ExitPortalNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3B92E4C385C003DDFAB /* ExitPortalNode.swift */; };
+		D0C5F3D72E4C3917003DDFAB /* FlowBarrierNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3BA2E4C385C003DDFAB /* FlowBarrierNode.swift */; };
+		D0C5F3D82E4C3917003DDFAB /* HeatPlateNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3BB2E4C385C003DDFAB /* HeatPlateNode.swift */; };
+		D0C5F3D92E4C3917003DDFAB /* IceWallNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3BC2E4C385C003DDFAB /* IceWallNode.swift */; };
+		D0C5F3DA2E4C3917003DDFAB /* SparkNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3BD2E4C385C003DDFAB /* SparkNode.swift */; };
+		D0C5F3DB2E4C3917003DDFAB /* SurgeBarrierNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3BE2E4C385C003DDFAB /* SurgeBarrierNode.swift */; };
+		D0C5F3DC2E4C3917003DDFAB /* VesperNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3BF2E4C385C003DDFAB /* VesperNode.swift */; };
+		D0C5F3DD2E4C3917003DDFAB /* WindmillNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C02E4C385C003DDFAB /* WindmillNode.swift */; };
+		D0C5F3DE2E4C3917003DDFAB /* BaseScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C22E4C385C003DDFAB /* BaseScene.swift */; };
+		D0C5F3DF2E4C3917003DDFAB /* SparkScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C32E4C385C003DDFAB /* SparkScene.swift */; };
+		D0C5F3E02E4C3917003DDFAB /* VesperScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C42E4C385C003DDFAB /* VesperScene.swift */; };
+		D0C5F3EE2E4C3917003DDFAB /* Level1Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3F22E4C385C003DDFAB /* Level1Scene.swift */; };
+		D0C5F3E12E4C3917003DDFAB /* LevelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C62E4C385C003DDFAB /* LevelManager.swift */; };
+		D0C5F3E22E4C3917003DDFAB /* ParticlePool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C72E4C385C003DDFAB /* ParticlePool.swift */; };
+		D0C5F3E32E4C3917003DDFAB /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3CA2E4C385C003DDFAB /* GameManager.swift */; };
+		D0C5F3E42E4C3917003DDFAB /* AchievementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3CC2E4C385C003DDFAB /* AchievementManager.swift */; };
+		D0C5F3E52E4C3917003DDFAB /* SaveSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3CD2E4C385C003DDFAB /* SaveSystem.swift */; };
+		D0C5F3E62E4C3917003DDFAB /* SparkAndVesperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3D42E4C385C003DDFAB /* SparkAndVesperApp.swift */; };
+		D0C5F3E72E4C3917003DDFAB /* GameScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3B42E4C385C003DDFAB /* GameScreen.swift */; };
+		D0C5F3E82E4C3917003DDFAB /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3B52E4C385C003DDFAB /* RootView.swift */; };
+		D0C5F3EC2E4C3917003DDFAB /* WebLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3F02E4C385C003DDFAB /* WebLevelView.swift */; };
+		D0C5F3ED2E4C3917003DDFAB /* level1.html in Resources */ = {isa = PBXBuildFile; fileRef = D0C5F3F12E4C385C003DDFAB /* level1.html */; };
+		D0C5F3E92E4C3917003DDFAB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3D02E4C385C003DDFAB /* Constants.swift */; };
+		D0C5F3EA2E4C3917003DDFAB /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3D12E4C385C003DDFAB /* Haptics.swift */; };
+		D0C5F3EB2E4C3917003DDFAB /* Shaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3D22E4C385C003DDFAB /* Shaders.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D0C5F3932E4BC037003DDFAB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,11 +56,50 @@
 		D0C5F3792E4BC036003DDFAB /* Spark&Vesper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Spark&Vesper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0C5F3922E4BC037003DDFAB /* Spark&VesperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spark&VesperTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0C5F39C2E4BC037003DDFAB /* Spark&VesperUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spark&VesperUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0C5F3B42E4C385C003DDFAB /* GameScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScreen.swift; sourceTree = "<group>"; };
+		D0C5F3B52E4C385C003DDFAB /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		D0C5F3F02E4C385C003DDFAB /* WebLevelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebLevelView.swift; sourceTree = "<group>"; };
+		D0C5F3F12E4C385C003DDFAB /* level1.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Content/Levels/level1.html; sourceTree = "<group>"; };
+		D0C5F3B82E4C385C003DDFAB /* BridgeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeNode.swift; sourceTree = "<group>"; };
+		D0C5F3B92E4C385C003DDFAB /* ExitPortalNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExitPortalNode.swift; sourceTree = "<group>"; };
+		D0C5F3BA2E4C385C003DDFAB /* FlowBarrierNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowBarrierNode.swift; sourceTree = "<group>"; };
+		D0C5F3BB2E4C385C003DDFAB /* HeatPlateNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatPlateNode.swift; sourceTree = "<group>"; };
+		D0C5F3BC2E4C385C003DDFAB /* IceWallNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IceWallNode.swift; sourceTree = "<group>"; };
+		D0C5F3BD2E4C385C003DDFAB /* SparkNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkNode.swift; sourceTree = "<group>"; };
+		D0C5F3BE2E4C385C003DDFAB /* SurgeBarrierNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurgeBarrierNode.swift; sourceTree = "<group>"; };
+		D0C5F3BF2E4C385C003DDFAB /* VesperNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesperNode.swift; sourceTree = "<group>"; };
+		D0C5F3C02E4C385C003DDFAB /* WindmillNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindmillNode.swift; sourceTree = "<group>"; };
+		D0C5F3C22E4C385C003DDFAB /* BaseScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseScene.swift; sourceTree = "<group>"; };
+		D0C5F3C32E4C385C003DDFAB /* SparkScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkScene.swift; sourceTree = "<group>"; };
+		D0C5F3C42E4C385C003DDFAB /* VesperScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesperScene.swift; sourceTree = "<group>"; };
+		D0C5F3F22E4C385C003DDFAB /* Level1Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level1Scene.swift; sourceTree = "<group>"; };
+		D0C5F3C62E4C385C003DDFAB /* LevelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelManager.swift; sourceTree = "<group>"; };
+		D0C5F3C72E4C385C003DDFAB /* ParticlePool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticlePool.swift; sourceTree = "<group>"; };
+		D0C5F3CA2E4C385C003DDFAB /* GameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
+		D0C5F3CC2E4C385C003DDFAB /* AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementManager.swift; sourceTree = "<group>"; };
+		D0C5F3CD2E4C385C003DDFAB /* SaveSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveSystem.swift; sourceTree = "<group>"; };
+		D0C5F3D02E4C385C003DDFAB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		D0C5F3D12E4C385C003DDFAB /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		D0C5F3D22E4C385C003DDFAB /* Shaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shaders.swift; sourceTree = "<group>"; };
+		D0C5F3D42E4C385C003DDFAB /* SparkAndVesperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkAndVesperApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D0C5F3B12E4C315E003DDFAB /* Exceptions for "Spark&Vesper" folder in "Spark&Vesper" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D0C5F3782E4BC036003DDFAB /* Spark&Vesper */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D0C5F37B2E4BC036003DDFAB /* Spark&Vesper */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D0C5F3B12E4C315E003DDFAB /* Exceptions for "Spark&Vesper" folder in "Spark&Vesper" target */,
+			);
 			path = "Spark&Vesper";
 			sourceTree = "<group>";
 		};
@@ -75,6 +143,11 @@
 		D0C5F3702E4BC036003DDFAB = {
 			isa = PBXGroup;
 			children = (
+				D0C5F3CB2E4C385C003DDFAB /* Game */,
+				D0C5F3CE2E4C385C003DDFAB /* Services */,
+				D0C5F3D42E4C385C003DDFAB /* SparkAndVesperApp.swift */,
+				D0C5F3B62E4C385C003DDFAB /* UI */,
+				D0C5F3D32E4C385C003DDFAB /* Utilities */,
 				D0C5F37B2E4BC036003DDFAB /* Spark&Vesper */,
 				D0C5F3952E4BC037003DDFAB /* Spark&VesperTests */,
 				D0C5F39F2E4BC037003DDFAB /* Spark&VesperUITests */,
@@ -90,6 +163,122 @@
 				D0C5F39C2E4BC037003DDFAB /* Spark&VesperUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D0C5F3B22E4C385C003DDFAB /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		D0C5F3B32E4C385C003DDFAB /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		D0C5F3B62E4C385C003DDFAB /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				D0C5F3B22E4C385C003DDFAB /* Components */,
+				D0C5F3B32E4C385C003DDFAB /* Screens */,
+				D0C5F3B42E4C385C003DDFAB /* GameScreen.swift */,
+				D0C5F3B52E4C385C003DDFAB /* RootView.swift */,
+				D0C5F3F02E4C385C003DDFAB /* WebLevelView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		D0C5F3B72E4C385C003DDFAB /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		D0C5F3C12E4C385C003DDFAB /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				D0C5F3B82E4C385C003DDFAB /* BridgeNode.swift */,
+				D0C5F3B92E4C385C003DDFAB /* ExitPortalNode.swift */,
+				D0C5F3BA2E4C385C003DDFAB /* FlowBarrierNode.swift */,
+				D0C5F3BB2E4C385C003DDFAB /* HeatPlateNode.swift */,
+				D0C5F3BC2E4C385C003DDFAB /* IceWallNode.swift */,
+				D0C5F3BD2E4C385C003DDFAB /* SparkNode.swift */,
+				D0C5F3BE2E4C385C003DDFAB /* SurgeBarrierNode.swift */,
+				D0C5F3BF2E4C385C003DDFAB /* VesperNode.swift */,
+				D0C5F3C02E4C385C003DDFAB /* WindmillNode.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		D0C5F3C52E4C385C003DDFAB /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				D0C5F3C22E4C385C003DDFAB /* BaseScene.swift */,
+				D0C5F3C32E4C385C003DDFAB /* SparkScene.swift */,
+				D0C5F3C42E4C385C003DDFAB /* VesperScene.swift */,
+				D0C5F3F22E4C385C003DDFAB /* Level1Scene.swift */,
+			);
+			path = Scenes;
+			sourceTree = "<group>";
+		};
+		D0C5F3C82E4C385C003DDFAB /* Systems */ = {
+			isa = PBXGroup;
+			children = (
+				D0C5F3C62E4C385C003DDFAB /* LevelManager.swift */,
+				D0C5F3C72E4C385C003DDFAB /* ParticlePool.swift */,
+			);
+			path = Systems;
+			sourceTree = "<group>";
+		};
+		D0C5F3C92E4C385C003DDFAB /* UI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		D0C5F3CB2E4C385C003DDFAB /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				D0C5F3B72E4C385C003DDFAB /* Assets */,
+				D0C5F3C12E4C385C003DDFAB /* Entities */,
+				D0C5F3C52E4C385C003DDFAB /* Scenes */,
+				D0C5F3C82E4C385C003DDFAB /* Systems */,
+				D0C5F3C92E4C385C003DDFAB /* UI */,
+				D0C5F3CA2E4C385C003DDFAB /* GameManager.swift */,
+			);
+			path = Game;
+			sourceTree = "<group>";
+		};
+		D0C5F3CE2E4C385C003DDFAB /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				D0C5F3CC2E4C385C003DDFAB /* AchievementManager.swift */,
+				D0C5F3CD2E4C385C003DDFAB /* SaveSystem.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		D0C5F3CF2E4C385C003DDFAB /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		D0C5F3D32E4C385C003DDFAB /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				D0C5F3CF2E4C385C003DDFAB /* Extensions */,
+				D0C5F3D02E4C385C003DDFAB /* Constants.swift */,
+				D0C5F3D12E4C385C003DDFAB /* Haptics.swift */,
+				D0C5F3D22E4C385C003DDFAB /* Shaders.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,6 +401,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0C5F3ED2E4C3917003DDFAB /* level1.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +426,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0C5F3D52E4C3917003DDFAB /* BridgeNode.swift in Sources */,
+				D0C5F3D62E4C3917003DDFAB /* ExitPortalNode.swift in Sources */,
+				D0C5F3D72E4C3917003DDFAB /* FlowBarrierNode.swift in Sources */,
+				D0C5F3D82E4C3917003DDFAB /* HeatPlateNode.swift in Sources */,
+				D0C5F3D92E4C3917003DDFAB /* IceWallNode.swift in Sources */,
+				D0C5F3DA2E4C3917003DDFAB /* SparkNode.swift in Sources */,
+				D0C5F3DB2E4C3917003DDFAB /* SurgeBarrierNode.swift in Sources */,
+				D0C5F3DC2E4C3917003DDFAB /* VesperNode.swift in Sources */,
+				D0C5F3DD2E4C3917003DDFAB /* WindmillNode.swift in Sources */,
+				D0C5F3DE2E4C3917003DDFAB /* BaseScene.swift in Sources */,
+				D0C5F3DF2E4C3917003DDFAB /* SparkScene.swift in Sources */,
+				D0C5F3E02E4C3917003DDFAB /* VesperScene.swift in Sources */,
+				D0C5F3EE2E4C3917003DDFAB /* Level1Scene.swift in Sources */,
+				D0C5F3E12E4C3917003DDFAB /* LevelManager.swift in Sources */,
+				D0C5F3E22E4C3917003DDFAB /* ParticlePool.swift in Sources */,
+				D0C5F3E32E4C3917003DDFAB /* GameManager.swift in Sources */,
+				D0C5F3E42E4C3917003DDFAB /* AchievementManager.swift in Sources */,
+				D0C5F3E52E4C3917003DDFAB /* SaveSystem.swift in Sources */,
+				D0C5F3E62E4C3917003DDFAB /* SparkAndVesperApp.swift in Sources */,
+				D0C5F3E72E4C3917003DDFAB /* GameScreen.swift in Sources */,
+				D0C5F3E82E4C3917003DDFAB /* RootView.swift in Sources */,
+				D0C5F3EC2E4C3917003DDFAB /* WebLevelView.swift in Sources */,
+				D0C5F3E92E4C3917003DDFAB /* Constants.swift in Sources */,
+				D0C5F3EA2E4C3917003DDFAB /* Haptics.swift in Sources */,
+				D0C5F3EB2E4C3917003DDFAB /* Shaders.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,7 +613,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -425,7 +639,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

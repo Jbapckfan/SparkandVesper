@@ -1,0 +1,294 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Spark & Vesper Level Schema",
+  "description": "Strict schema for level JSON files",
+  "type": "object",
+  "required": ["id", "index", "title", "sparkStart", "vesperStart", "sparkPortal", "vesperPortal"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^Level[0-9]{2}$"
+    },
+    "index": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 99
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 30
+    },
+    "sparkStart": {
+      "$ref": "#/definitions/point"
+    },
+    "vesperStart": {
+      "$ref": "#/definitions/point"
+    },
+    "sparkPortal": {
+      "$ref": "#/definitions/portal"
+    },
+    "vesperPortal": {
+      "$ref": "#/definitions/portal"
+    },
+    "windmills": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/windmill"
+      }
+    },
+    "bridges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/bridge"
+      }
+    },
+    "heatPlates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/heatPlate"
+      }
+    },
+    "iceWalls": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/iceWall"
+      }
+    },
+    "surgeBarriers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/barrier"
+      }
+    },
+    "flowBarriers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/barrier"
+      }
+    },
+    "resonancePads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/resonancePad"
+      }
+    },
+    "hazards": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/hazard"
+      }
+    },
+    "tuning": {
+      "$ref": "#/definitions/tuning"
+    }
+  },
+  "definitions": {
+    "point": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 400
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 300
+        }
+      }
+    },
+    "size": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 200
+        },
+        "height": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 200
+        }
+      }
+    },
+    "portal": {
+      "type": "object",
+      "required": ["position", "radius"],
+      "properties": {
+        "position": {
+          "$ref": "#/definitions/point"
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 20,
+          "maximum": 40
+        }
+      }
+    },
+    "windmill": {
+      "type": "object",
+      "required": ["position", "linkIndex"],
+      "properties": {
+        "position": {
+          "$ref": "#/definitions/point"
+        },
+        "linkIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "threshold": {
+          "type": "number",
+          "default": 0.3
+        }
+      }
+    },
+    "bridge": {
+      "type": "object",
+      "required": ["origin", "maxWidth", "linkIndex"],
+      "properties": {
+        "origin": {
+          "$ref": "#/definitions/point"
+        },
+        "maxWidth": {
+          "type": "number",
+          "minimum": 20,
+          "maximum": 150
+        },
+        "linkIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        }
+      }
+    },
+    "heatPlate": {
+      "type": "object",
+      "required": ["position", "radius", "linkIndex"],
+      "properties": {
+        "position": {
+          "$ref": "#/definitions/point"
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 20,
+          "maximum": 50
+        },
+        "linkIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        }
+      }
+    },
+    "iceWall": {
+      "type": "object",
+      "required": ["position", "size", "linkIndex"],
+      "properties": {
+        "position": {
+          "$ref": "#/definitions/point"
+        },
+        "size": {
+          "$ref": "#/definitions/size"
+        },
+        "linkIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "meltTime": {
+          "type": "number",
+          "default": 1.0
+        }
+      }
+    },
+    "barrier": {
+      "type": "object",
+      "required": ["position", "size"],
+      "properties": {
+        "position": {
+          "$ref": "#/definitions/point"
+        },
+        "size": {
+          "$ref": "#/definitions/size"
+        }
+      }
+    },
+    "resonancePad": {
+      "type": "object",
+      "required": ["sparkPos", "vesperPos", "windowMs"],
+      "properties": {
+        "sparkPos": {
+          "$ref": "#/definitions/point"
+        },
+        "vesperPos": {
+          "$ref": "#/definitions/point"
+        },
+        "windowMs": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 1000
+        }
+      }
+    },
+    "hazard": {
+      "type": "object",
+      "required": ["type", "position"],
+      "properties": {
+        "type": {
+          "enum": ["spike", "crusher", "laser", "void"]
+        },
+        "position": {
+          "$ref": "#/definitions/point"
+        },
+        "timing": {
+          "type": "object",
+          "properties": {
+            "period": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "tuning": {
+      "type": "object",
+      "properties": {
+        "targetTime": {
+          "type": "integer",
+          "description": "Target clear time in seconds"
+        },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/point"
+          }
+        },
+        "hintTriggers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "failCount": {
+                "type": "integer"
+              },
+              "timeStuck": {
+                "type": "integer"
+              },
+              "hint": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

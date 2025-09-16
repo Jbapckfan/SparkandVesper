@@ -1,0 +1,75 @@
+# Spark & Vesper Agent Supervisor Configuration
+# Controls budgets, triggers, and guardrails for all 5 agents
+
+agents:
+  Mechanics:
+    triggers: [pr:levels, design_spike, manual]
+    outputs: [patch, routes, bot_script]
+    llm_tokens_max: 1500
+    require_validator_pass: true
+    max_execution_time: 30s
+    
+  Visuals:
+    triggers: [pr:art, perf_regression, shader_change]
+    outputs: [emitters, shaders, visual_report]
+    llm_tokens_max: 400
+    ssim_min: 0.92
+    frame_ms_max: 2.0
+    
+  Pacing:
+    triggers: [post_playtest, weekly, telemetry_batch]
+    outputs: [pacing_report, heatmap, patch]
+    llm_tokens_max: 800
+    min_sessions: 10
+    
+  Perf:
+    triggers: [nightly, pre_release, fx_change]
+    outputs: [perf_table, fx_budget_patch, screensafe_report]
+    llm: false  # Pure deterministic testing
+    devices:
+      - iPhone8
+      - iPhone12
+      - iPhone14Pro
+      - iPadAir4
+      
+  Narrative:
+    triggers: [chapter_change, level_order_change, story_review]
+    outputs: [chapter_beats, story_cues, clash_report]
+    llm_tokens_max: 1200
+    max_beats_per_level: 3
+
+governance:
+  require_artifact: true
+  cancel_in_progress_on_new_commit: true
+  auto_sunset_after_noop_runs: 5
+  max_concurrent_agents: 2
+  
+budgets:
+  daily_total_tokens: 120000
+  per_agent_daily:
+    Mechanics: 30000
+    Visuals: 6000
+    Pacing: 10000
+    Narrative: 15000
+    
+quality_gates:
+  mechanics:
+    - validator_pass: true
+    - clear_time_max: 120
+    - gotcha_deaths_max: 3
+  visuals:
+    - ssim_score_min: 0.92
+    - fps_p1_min: 55
+    - contrast_aa_min: 4.5
+  pacing:
+    - fail_cluster_reduction_min: 0.15
+    - bot_time_increase_max: 10
+  performance:
+    - fps_p50_min: 58
+    - frame_spike_max_ms: 14
+    - memory_leak_mb: 0
+    
+notifications:
+  slack_webhook: "${SLACK_WEBHOOK_URL}"
+  email_on_blocker: team@sparkandvesper.game
+  dashboard_url: "https://sparkandvesper.game/automation"

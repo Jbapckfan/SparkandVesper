@@ -1,0 +1,91 @@
+{
+  "id": "Level00",
+  "index": 0,
+  "title": "First Sight",
+  "sparkStart": {
+    "x": 60,
+    "y": 200
+  },
+  "vesperStart": {
+    "x": 60,
+    "y": 100
+  },
+  "sparkPortal": {
+    "position": {
+      "x": 280,
+      "y": 200
+    },
+    "radius": 30
+  },
+  "vesperPortal": {
+    "position": {
+      "x": 280,
+      "y": 100
+    },
+    "radius": 30
+  },
+  "windmills": [
+    {
+      "position": {
+        "x": 150,
+        "y": 180
+      },
+      "linkIndex": 0,
+      "threshold": 0.3
+    }
+  ],
+  "bridges": [
+    {
+      "origin": {
+        "x": 120,
+        "y": 140
+      },
+      "maxWidth": 100,
+      "linkIndex": 0
+    }
+  ],
+  "heatPlates": [
+    {
+      "position": {
+        "x": 200,
+        "y": 180
+      },
+      "radius": 35,
+      "linkIndex": 0
+    }
+  ],
+  "iceWalls": [
+    {
+      "position": {
+        "x": 220,
+        "y": 100
+      },
+      "size": {
+        "width": 45,
+        "height": 70
+      },
+      "linkIndex": 0,
+      "meltTime": 1.0
+    }
+  ],
+  "surgeBarriers": [],
+  "flowBarriers": [],
+  "resonancePads": [],
+  "hazards": [],
+  "tuning": {
+    "targetTime": 30,
+    "checkpoints": [],
+    "hintTriggers": [
+      {
+        "failCount": 3,
+        "timeStuck": 20,
+        "hint": "vesper_creates_wind"
+      },
+      {
+        "failCount": 5,
+        "timeStuck": 30,
+        "hint": "spark_melts_ice"
+      }
+    ]
+  }
+}

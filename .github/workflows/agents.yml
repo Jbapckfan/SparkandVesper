@@ -1,0 +1,205 @@
+name: Game Design Agents
+
+on:
+  pull_request:
+    paths:
+      - 'Content/Levels/**'
+      - 'Content/Art/**'
+      - 'Game/**/*.swift'
+  schedule:
+    - cron: '0 2 * * *'  # Nightly at 2 AM
+  workflow_dispatch:
+    inputs:
+      agent:
+        description: 'Agent to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - mechanics
+          - visuals
+          - pacing
+          - performance
+          - narrative
+
+jobs:
+  mechanics-check:
+    if: |
+      github.event_name == 'pull_request' && 
+      contains(github.event.pull_request.changed_files, 'Content/Levels/')
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Validate Level Schema
+        run: |
+          for level in Content/Levels/*.json; do
+            npx ajv-cli validate -s Content/Levels/levels.schema.json -d "$level"
+          done
+      
+      - name: Run Mechanics Agent
+        run: |
+          swift run MechanicsAgent \
+            --level "${{ github.event.pull_request.changed_files }}" \
+            --max-tokens 1500 \
+            --output reports/mechanics_patch.json
+      
+      - name: Run Validator Bot
+        run: |
+          swift run ValidatorBot \
+            --script reports/mechanics_patch.json \
+            --timeout 120 \
+            --record reports/bot_clear.mp4
+      
+      - name: Upload Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: mechanics-reports
+          path: reports/
+
+  visual-check:
+    if: |
+      github.event_name == 'pull_request' && 
+      contains(github.event.pull_request.changed_files, 'Content/Art/')
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run Visual Agent
+        run: |
+          swift run VisualAgent \
+            --golden Automation/reports/golden/ \
+            --current Content/Art/ \
+            --ssim-threshold 0.92 \
+            --output reports/visual_report.html
+      
+      - name: Check Contrast
+        run: |
+          swift run ContrastChecker \
+            --minimum 4.5 \
+            --palette Content/Art/palette.json
+      
+      - name: Upload Visual Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: visual-reports
+          path: reports/visual_report.html
+
+  nightly-performance:
+    if: github.event_name == 'schedule'
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        device: [iPhone8, iPhone12, iPhone14Pro, iPadAir4]
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run Performance Test
+        run: |
+          xcrun simctl boot "${{ matrix.device }}"
+          swift run PerformanceAgent \
+            --device "${{ matrix.device }}" \
+            --levels "0,1,2,3" \
+            --output "reports/perf_${{ matrix.device }}.csv"
+      
+      - name: Check FPS Targets
+        run: |
+          swift run FPSChecker \
+            --report "reports/perf_${{ matrix.device }}.csv" \
+            --p50-min 58 \
+            --p1-min 55
+      
+      - name: Generate FX Budget
+        if: failure()
+        run: |
+          swift run FXBudgetGenerator \
+            --perf-data "reports/perf_${{ matrix.device }}.csv" \
+            --output "reports/fx_budget_patch.json"
+      
+      - name: Upload Performance Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-reports-${{ matrix.device }}
+          path: reports/
+
+  weekly-pacing:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.agent == 'pacing'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Download Telemetry
+        run: |
+          # In production, download from analytics service
+          echo "Downloading telemetry..."
+      
+      - name: Run Pacing Analyzer
+        run: |
+          swift run PacingAnalyzer \
+            --telemetry telemetry/events.ndjson \
+            --min-sessions 10 \
+            --output reports/pacing_report.json
+      
+      - name: Generate Heatmap
+        run: |
+          swift run HeatmapGenerator \
+            --telemetry telemetry/events.ndjson \
+            --output reports/heatmap.png
+      
+      - name: Create Tuning Patch
+        run: |
+          swift run TuningPatcher \
+            --report reports/pacing_report.json \
+            --levels Content/Levels/ \
+            --output reports/tuning_patch.json
+      
+      - name: Create PR with Patches
+        if: success()
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "[Agents] Pacing improvements from playtests"
+          body: |
+            ## Pacing Analysis Results
+            
+            Based on telemetry from the last week:
+            - Sessions analyzed: ${{ steps.pacing.outputs.sessions }}
+            - Top 3 tuning knobs applied
+            - See attached heatmap for problem areas
+            
+            ![Heatmap](reports/heatmap.png)
+          branch: agents/pacing-patch
+          commit-message: "Apply pacing improvements"
+
+  master-pipeline:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.agent == 'all'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run All Agents (60 second review)
+        run: |
+          swift run MasterPipeline \
+            --mode quick \
+            --max-time 60 \
+            --output reports/master_report.json
+      
+      - name: Go/No-Go Decision
+        id: decision
+        run: |
+          VERDICT=$(jq -r '.shipIt' reports/master_report.json)
+          echo "verdict=$VERDICT" >> $GITHUB_OUTPUT
+          
+          if [ "$VERDICT" = "true" ]; then
+            echo "✅ SHIP IT!"
+          else
+            echo "🛑 BLOCKERS FOUND"
+            jq -r '.blockers[]' reports/master_report.json
+          fi
+      
+      - name: Post to Slack
+        if: always()
+        run: |
+          curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
+            -H 'Content-Type: application/json' \
+            -d "{\"text\":\"Spark & Vesper: ${{ steps.decision.outputs.verdict }}\"}"
