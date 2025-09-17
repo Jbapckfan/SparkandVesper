@@ -1,7 +1,6 @@
 import Foundation
 import UIKit
-// Uncomment after running `pod install`:
-// import GoogleMobileAds
+import GoogleMobileAds
 
 // MARK: - AdMob Configuration
 struct AdMobConfig {
@@ -32,13 +31,10 @@ final class AdMobManager: NSObject, ObservableObject {
     @Published private(set) var isRewardedAdReady = false
     @Published private(set) var isShowingAd = false
 
-    // Uncomment after pod install:
-    /*
     private var bannerView: GADBannerView?
     private var interstitial: GADInterstitialAd?
     private var rewardedAd: GADRewardedAd?
     private var rewardedInterstitialAd: GADRewardedInterstitialAd?
-    */
 
     // Ad frequency control
     private var lastInterstitialTime: Date?
@@ -46,7 +42,8 @@ final class AdMobManager: NSObject, ObservableObject {
     private var levelsCompletedSinceAd = 0
     private let levelsPerInterstitial = 3
 
-    // Reward completion handlers
+    // Completion handlers
+    private var interstitialCompletion: (() -> Void)?
     private var rewardedAdCompletion: ((Bool) -> Void)?
 
     private override init() {
@@ -56,8 +53,6 @@ final class AdMobManager: NSObject, ObservableObject {
 
     // MARK: - Initialization
     private func initializeAdMob() {
-        // Uncomment after pod install:
-        /*
         GADMobileAds.sharedInstance().start { [weak self] status in
             print("📱 AdMob SDK initialized")
 
@@ -73,23 +68,10 @@ final class AdMobManager: NSObject, ObservableObject {
             self?.loadInterstitialAd()
             self?.loadRewardedAd()
         }
-        */
-
-        // For now, simulate initialization
-        #if DEBUG
-        print("📱 AdMob: Initialized (Simulation Mode)")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            self?.isBannerReady = true
-            self?.isInterstitialReady = true
-            self?.isRewardedAdReady = true
-        }
-        #endif
     }
 
     // MARK: - Banner Ads
     func createBannerView(in viewController: UIViewController) -> UIView {
-        // Uncomment after pod install:
-        /*
         let bannerView = GADBannerView(adSize: GADAdSizeBanner)
         bannerView.adUnitID = AdMobConfig.bannerID
         bannerView.rootViewController = viewController
@@ -99,27 +81,15 @@ final class AdMobManager: NSObject, ObservableObject {
         loadBannerAd()
 
         return bannerView
-        */
-
-        // Placeholder view for now
-        let placeholderView = UIView()
-        placeholderView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
-        placeholderView.frame = CGRect(x: 0, y: 0, width: 320, height: 50)
-        return placeholderView
     }
 
     private func loadBannerAd() {
-        // Uncomment after pod install:
-        /*
         let request = GADRequest()
         bannerView?.load(request)
-        */
     }
 
     // MARK: - Interstitial Ads
     private func loadInterstitialAd() {
-        // Uncomment after pod install:
-        /*
         let request = GADRequest()
         GADInterstitialAd.load(withAdUnitID: AdMobConfig.interstitialID,
                                request: request) { [weak self] ad, error in
@@ -138,7 +108,6 @@ final class AdMobManager: NSObject, ObservableObject {
             self?.isInterstitialReady = true
             print("📱 AdMob: Interstitial loaded")
         }
-        */
     }
 
     func showInterstitial(from viewController: UIViewController, placement: AdPlacement, completion: (() -> Void)? = nil) {
@@ -165,8 +134,6 @@ final class AdMobManager: NSObject, ObservableObject {
             levelsCompletedSinceAd = 0
         }
 
-        // Uncomment after pod install:
-        /*
         guard let interstitial = interstitial else {
             completion?()
             loadInterstitialAd() // Reload for next time
@@ -175,29 +142,15 @@ final class AdMobManager: NSObject, ObservableObject {
 
         isShowingAd = true
         lastInterstitialTime = Date()
+        interstitialCompletion = completion
 
         interstitial.present(fromRootViewController: viewController)
-        self.interstitialCompletion = completion
-        */
-
-        // Simulation for now
-        #if DEBUG
-        print("📱 AdMob: Showing interstitial for \(placement.rawValue)")
-        isShowingAd = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-            self?.isShowingAd = false
-            self?.lastInterstitialTime = Date()
-            completion?()
-        }
-        #endif
 
         AnalyticsManager.shared.trackAdImpression(adType: "interstitial", placement: placement.rawValue)
     }
 
     // MARK: - Rewarded Ads
     private func loadRewardedAd() {
-        // Uncomment after pod install:
-        /*
         let request = GADRequest()
         GADRewardedAd.load(withAdUnitID: AdMobConfig.rewardedID,
                            request: request) { [weak self] ad, error in
@@ -212,16 +165,13 @@ final class AdMobManager: NSObject, ObservableObject {
             }
 
             self?.rewardedAd = ad
-            self?.rewardedAd?.fullScreenPresentingAd = self
+            self?.rewardedAd?.fullScreenContentDelegate = self
             self?.isRewardedAdReady = true
             print("📱 AdMob: Rewarded ad loaded")
         }
-        */
     }
 
     func showRewardedAd(from viewController: UIViewController, placement: AdPlacement, completion: @escaping (Bool) -> Void) {
-        // Uncomment after pod install:
-        /*
         guard let rewardedAd = rewardedAd else {
             completion(false)
             loadRewardedAd() // Reload for next time
@@ -244,24 +194,6 @@ final class AdMobManager: NSObject, ObservableObject {
             self?.rewardedAdCompletion?(true)
             self?.loadRewardedAd() // Load next ad
         }
-        */
-
-        // Simulation for now
-        #if DEBUG
-        print("📱 AdMob: Showing rewarded ad for \(placement.rawValue)")
-        isShowingAd = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-            self?.isShowingAd = false
-            let earnedReward = Bool.random() || true // Simulate 100% completion for testing
-            if earnedReward {
-                AnalyticsManager.shared.trackRewardedAdComplete(
-                    reward: placement.rawValue,
-                    amount: self?.getRewardAmount(for: placement) ?? 1
-                )
-            }
-            completion(earnedReward)
-        }
-        #endif
 
         AnalyticsManager.shared.trackAdImpression(adType: "rewarded", placement: placement.rawValue)
     }
@@ -281,21 +213,16 @@ final class AdMobManager: NSObject, ObservableObject {
     }
 
     func preloadAds() {
-        // Uncomment after pod install:
-        /*
         if interstitial == nil {
             loadInterstitialAd()
         }
         if rewardedAd == nil {
             loadRewardedAd()
         }
-        */
     }
 }
 
 // MARK: - AdMob Delegates
-// Uncomment after pod install:
-/*
 extension AdMobManager: GADBannerViewDelegate {
     func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
         print("📱 AdMob: Banner loaded")
@@ -360,7 +287,6 @@ extension AdMobManager: GADFullScreenContentDelegate {
         // Impression tracking is handled when showing the ad
     }
 }
-*/
 
 // MARK: - SwiftUI Integration
 import SwiftUI
