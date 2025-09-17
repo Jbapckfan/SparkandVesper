@@ -337,7 +337,6 @@
 				D0C5F3752E4BC036003DDFAB /* Sources */,
 				D0C5F3762E4BC036003DDFAB /* Frameworks */,
 				D0C5F3772E4BC036003DDFAB /* Resources */,
-				BF59B851095A631E8CED5B69 /* [CP] Embed Pods Frameworks */,
 				D4FA7FA90D3F67771B6EAE95 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -382,7 +381,6 @@
 				D0C5F3982E4BC037003DDFAB /* Sources */,
 				D0C5F3992E4BC037003DDFAB /* Frameworks */,
 				D0C5F39A2E4BC037003DDFAB /* Resources */,
-				B15F6C380E6AF06E9938BD4C /* [CP] Embed Pods Frameworks */,
 				5282E5F6D7B2CF076A120667 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -549,40 +547,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B15F6C380E6AF06E9938BD4C /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BF59B851095A631E8CED5B69 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D4FA7FA90D3F67771B6EAE95 /* [CP] Copy Pods Resources */ = {
