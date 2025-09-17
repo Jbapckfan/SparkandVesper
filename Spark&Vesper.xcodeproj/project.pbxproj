@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D3EC881F176CB42C19E4EEF /* Pods_Spark_VesperTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2593E2B92EFD3A736B0E9033 /* Pods_Spark_VesperTests.framework */; };
+		48EFE4955AF62CE2B607C767 /* Pods_Spark_Vesper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5A7557DEAABCB1A7CEA7057 /* Pods_Spark_Vesper.framework */; };
+		B03E15B7B42FDC1E5E88905F /* Pods_Spark_Vesper_Spark_VesperUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4380452FAB89E82C1A475DEB /* Pods_Spark_Vesper_Spark_VesperUITests.framework */; };
 		D0C5F3D52E4C3917003DDFAB /* BridgeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3B82E4C385C003DDFAB /* BridgeNode.swift */; };
 		D0C5F3D62E4C3917003DDFAB /* ExitPortalNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3B92E4C385C003DDFAB /* ExitPortalNode.swift */; };
 		D0C5F3D72E4C3917003DDFAB /* FlowBarrierNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3BA2E4C385C003DDFAB /* FlowBarrierNode.swift */; };
@@ -19,7 +22,6 @@
 		D0C5F3DE2E4C3917003DDFAB /* BaseScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C22E4C385C003DDFAB /* BaseScene.swift */; };
 		D0C5F3DF2E4C3917003DDFAB /* SparkScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C32E4C385C003DDFAB /* SparkScene.swift */; };
 		D0C5F3E02E4C3917003DDFAB /* VesperScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C42E4C385C003DDFAB /* VesperScene.swift */; };
-		D0C5F3EE2E4C3917003DDFAB /* Level1Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3F22E4C385C003DDFAB /* Level1Scene.swift */; };
 		D0C5F3E12E4C3917003DDFAB /* LevelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C62E4C385C003DDFAB /* LevelManager.swift */; };
 		D0C5F3E22E4C3917003DDFAB /* ParticlePool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3C72E4C385C003DDFAB /* ParticlePool.swift */; };
 		D0C5F3E32E4C3917003DDFAB /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3CA2E4C385C003DDFAB /* GameManager.swift */; };
@@ -28,11 +30,12 @@
 		D0C5F3E62E4C3917003DDFAB /* SparkAndVesperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3D42E4C385C003DDFAB /* SparkAndVesperApp.swift */; };
 		D0C5F3E72E4C3917003DDFAB /* GameScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3B42E4C385C003DDFAB /* GameScreen.swift */; };
 		D0C5F3E82E4C3917003DDFAB /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3B52E4C385C003DDFAB /* RootView.swift */; };
-		D0C5F3EC2E4C3917003DDFAB /* WebLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3F02E4C385C003DDFAB /* WebLevelView.swift */; };
-		D0C5F3ED2E4C3917003DDFAB /* level1.html in Resources */ = {isa = PBXBuildFile; fileRef = D0C5F3F12E4C385C003DDFAB /* level1.html */; };
 		D0C5F3E92E4C3917003DDFAB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3D02E4C385C003DDFAB /* Constants.swift */; };
 		D0C5F3EA2E4C3917003DDFAB /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3D12E4C385C003DDFAB /* Haptics.swift */; };
 		D0C5F3EB2E4C3917003DDFAB /* Shaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3D22E4C385C003DDFAB /* Shaders.swift */; };
+		D0C5F3EC2E4C3917003DDFAB /* WebLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3F02E4C385C003DDFAB /* WebLevelView.swift */; };
+		D0C5F3ED2E4C3917003DDFAB /* level1.html in Resources */ = {isa = PBXBuildFile; fileRef = D0C5F3F12E4C385C003DDFAB /* level1.html */; };
+		D0C5F3EE2E4C3917003DDFAB /* Level1Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C5F3F22E4C385C003DDFAB /* Level1Scene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,13 +56,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		02A8C066EC348D7483B3FD3E /* Pods-Spark&Vesper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spark&Vesper.debug.xcconfig"; path = "Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper.debug.xcconfig"; sourceTree = "<group>"; };
+		2593E2B92EFD3A736B0E9033 /* Pods_Spark_VesperTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spark_VesperTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2801C14D036FB4CEF45AC226 /* Pods-Spark&VesperTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spark&VesperTests.release.xcconfig"; path = "Target Support Files/Pods-Spark&VesperTests/Pods-Spark&VesperTests.release.xcconfig"; sourceTree = "<group>"; };
+		4380452FAB89E82C1A475DEB /* Pods_Spark_Vesper_Spark_VesperUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spark_Vesper_Spark_VesperUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		71B51F35561E69E72A1804D6 /* Pods-Spark&Vesper-Spark&VesperUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spark&Vesper-Spark&VesperUITests.debug.xcconfig"; path = "Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		A630FCA725099B1C8AEECD72 /* Pods-Spark&Vesper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spark&Vesper.release.xcconfig"; path = "Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper.release.xcconfig"; sourceTree = "<group>"; };
+		A64A515E8F1796D6A468600C /* Pods-Spark&Vesper-Spark&VesperUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spark&Vesper-Spark&VesperUITests.release.xcconfig"; path = "Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests.release.xcconfig"; sourceTree = "<group>"; };
+		A91223C7F2ADC0E5D6C2D150 /* Pods-Spark&VesperTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spark&VesperTests.debug.xcconfig"; path = "Target Support Files/Pods-Spark&VesperTests/Pods-Spark&VesperTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D0C5F3792E4BC036003DDFAB /* Spark&Vesper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Spark&Vesper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0C5F3922E4BC037003DDFAB /* Spark&VesperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spark&VesperTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0C5F39C2E4BC037003DDFAB /* Spark&VesperUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spark&VesperUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0C5F3B42E4C385C003DDFAB /* GameScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScreen.swift; sourceTree = "<group>"; };
 		D0C5F3B52E4C385C003DDFAB /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		D0C5F3F02E4C385C003DDFAB /* WebLevelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebLevelView.swift; sourceTree = "<group>"; };
-		D0C5F3F12E4C385C003DDFAB /* level1.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Content/Levels/level1.html; sourceTree = "<group>"; };
 		D0C5F3B82E4C385C003DDFAB /* BridgeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeNode.swift; sourceTree = "<group>"; };
 		D0C5F3B92E4C385C003DDFAB /* ExitPortalNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExitPortalNode.swift; sourceTree = "<group>"; };
 		D0C5F3BA2E4C385C003DDFAB /* FlowBarrierNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowBarrierNode.swift; sourceTree = "<group>"; };
@@ -72,7 +81,6 @@
 		D0C5F3C22E4C385C003DDFAB /* BaseScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseScene.swift; sourceTree = "<group>"; };
 		D0C5F3C32E4C385C003DDFAB /* SparkScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkScene.swift; sourceTree = "<group>"; };
 		D0C5F3C42E4C385C003DDFAB /* VesperScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesperScene.swift; sourceTree = "<group>"; };
-		D0C5F3F22E4C385C003DDFAB /* Level1Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level1Scene.swift; sourceTree = "<group>"; };
 		D0C5F3C62E4C385C003DDFAB /* LevelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelManager.swift; sourceTree = "<group>"; };
 		D0C5F3C72E4C385C003DDFAB /* ParticlePool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticlePool.swift; sourceTree = "<group>"; };
 		D0C5F3CA2E4C385C003DDFAB /* GameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
@@ -82,6 +90,10 @@
 		D0C5F3D12E4C385C003DDFAB /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		D0C5F3D22E4C385C003DDFAB /* Shaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shaders.swift; sourceTree = "<group>"; };
 		D0C5F3D42E4C385C003DDFAB /* SparkAndVesperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkAndVesperApp.swift; sourceTree = "<group>"; };
+		D0C5F3F02E4C385C003DDFAB /* WebLevelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebLevelView.swift; sourceTree = "<group>"; };
+		D0C5F3F12E4C385C003DDFAB /* level1.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Content/Levels/level1.html; sourceTree = "<group>"; };
+		D0C5F3F22E4C385C003DDFAB /* Level1Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level1Scene.swift; sourceTree = "<group>"; };
+		F5A7557DEAABCB1A7CEA7057 /* Pods_Spark_Vesper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spark_Vesper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -105,11 +117,15 @@
 		};
 		D0C5F3952E4BC037003DDFAB /* Spark&VesperTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = "Spark&VesperTests";
 			sourceTree = "<group>";
 		};
 		D0C5F39F2E4BC037003DDFAB /* Spark&VesperUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = "Spark&VesperUITests";
 			sourceTree = "<group>";
 		};
@@ -120,6 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48EFE4955AF62CE2B607C767 /* Pods_Spark_Vesper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D3EC881F176CB42C19E4EEF /* Pods_Spark_VesperTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,12 +152,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B03E15B7B42FDC1E5E88905F /* Pods_Spark_Vesper_Spark_VesperUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C06E21F2AD9A807F6AE307A9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				02A8C066EC348D7483B3FD3E /* Pods-Spark&Vesper.debug.xcconfig */,
+				A630FCA725099B1C8AEECD72 /* Pods-Spark&Vesper.release.xcconfig */,
+				71B51F35561E69E72A1804D6 /* Pods-Spark&Vesper-Spark&VesperUITests.debug.xcconfig */,
+				A64A515E8F1796D6A468600C /* Pods-Spark&Vesper-Spark&VesperUITests.release.xcconfig */,
+				A91223C7F2ADC0E5D6C2D150 /* Pods-Spark&VesperTests.debug.xcconfig */,
+				2801C14D036FB4CEF45AC226 /* Pods-Spark&VesperTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		C35E7E9F6581AFE55FFEBBEE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F5A7557DEAABCB1A7CEA7057 /* Pods_Spark_Vesper.framework */,
+				4380452FAB89E82C1A475DEB /* Pods_Spark_Vesper_Spark_VesperUITests.framework */,
+				2593E2B92EFD3A736B0E9033 /* Pods_Spark_VesperTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D0C5F3702E4BC036003DDFAB = {
 			isa = PBXGroup;
 			children = (
@@ -152,6 +195,8 @@
 				D0C5F3952E4BC037003DDFAB /* Spark&VesperTests */,
 				D0C5F39F2E4BC037003DDFAB /* Spark&VesperUITests */,
 				D0C5F37A2E4BC036003DDFAB /* Products */,
+				C06E21F2AD9A807F6AE307A9 /* Pods */,
+				C35E7E9F6581AFE55FFEBBEE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -288,9 +333,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D0C5F3A62E4BC037003DDFAB /* Build configuration list for PBXNativeTarget "Spark&Vesper" */;
 			buildPhases = (
+				6116BFDFAD1C4DFCE721A657 /* [CP] Check Pods Manifest.lock */,
 				D0C5F3752E4BC036003DDFAB /* Sources */,
 				D0C5F3762E4BC036003DDFAB /* Frameworks */,
 				D0C5F3772E4BC036003DDFAB /* Resources */,
+				BF59B851095A631E8CED5B69 /* [CP] Embed Pods Frameworks */,
+				D4FA7FA90D3F67771B6EAE95 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -300,8 +348,6 @@
 				D0C5F37B2E4BC036003DDFAB /* Spark&Vesper */,
 			);
 			name = "Spark&Vesper";
-			packageProductDependencies = (
-			);
 			productName = "Spark&Vesper";
 			productReference = D0C5F3792E4BC036003DDFAB /* Spark&Vesper.app */;
 			productType = "com.apple.product-type.application";
@@ -310,6 +356,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D0C5F3A92E4BC037003DDFAB /* Build configuration list for PBXNativeTarget "Spark&VesperTests" */;
 			buildPhases = (
+				59DBCB8F77162C2AD97874FF /* [CP] Check Pods Manifest.lock */,
 				D0C5F38E2E4BC037003DDFAB /* Sources */,
 				D0C5F38F2E4BC037003DDFAB /* Frameworks */,
 				D0C5F3902E4BC037003DDFAB /* Resources */,
@@ -323,8 +370,6 @@
 				D0C5F3952E4BC037003DDFAB /* Spark&VesperTests */,
 			);
 			name = "Spark&VesperTests";
-			packageProductDependencies = (
-			);
 			productName = "Spark&VesperTests";
 			productReference = D0C5F3922E4BC037003DDFAB /* Spark&VesperTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -333,9 +378,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D0C5F3AC2E4BC037003DDFAB /* Build configuration list for PBXNativeTarget "Spark&VesperUITests" */;
 			buildPhases = (
+				82AF736CADA51F477DC26EA1 /* [CP] Check Pods Manifest.lock */,
 				D0C5F3982E4BC037003DDFAB /* Sources */,
 				D0C5F3992E4BC037003DDFAB /* Frameworks */,
 				D0C5F39A2E4BC037003DDFAB /* Resources */,
+				B15F6C380E6AF06E9938BD4C /* [CP] Embed Pods Frameworks */,
+				5282E5F6D7B2CF076A120667 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -346,8 +394,6 @@
 				D0C5F39F2E4BC037003DDFAB /* Spark&VesperUITests */,
 			);
 			name = "Spark&VesperUITests";
-			packageProductDependencies = (
-			);
 			productName = "Spark&VesperUITests";
 			productReference = D0C5F39C2E4BC037003DDFAB /* Spark&VesperUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -420,6 +466,143 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5282E5F6D7B2CF076A120667 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		59DBCB8F77162C2AD97874FF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Spark&VesperTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6116BFDFAD1C4DFCE721A657 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Spark&Vesper-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		82AF736CADA51F477DC26EA1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Spark&Vesper-Spark&VesperUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B15F6C380E6AF06E9938BD4C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper-Spark&VesperUITests/Pods-Spark&Vesper-Spark&VesperUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BF59B851095A631E8CED5B69 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D4FA7FA90D3F67771B6EAE95 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Spark&Vesper/Pods-Spark&Vesper-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D0C5F3752E4BC036003DDFAB /* Sources */ = {
@@ -605,6 +788,7 @@
 		};
 		D0C5F3A72E4BC037003DDFAB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 02A8C066EC348D7483B3FD3E /* Pods-Spark&Vesper.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -631,6 +815,7 @@
 		};
 		D0C5F3A82E4BC037003DDFAB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A630FCA725099B1C8AEECD72 /* Pods-Spark&Vesper.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -657,6 +842,7 @@
 		};
 		D0C5F3AA2E4BC037003DDFAB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A91223C7F2ADC0E5D6C2D150 /* Pods-Spark&VesperTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -675,6 +861,7 @@
 		};
 		D0C5F3AB2E4BC037003DDFAB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2801C14D036FB4CEF45AC226 /* Pods-Spark&VesperTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -693,6 +880,7 @@
 		};
 		D0C5F3AD2E4BC037003DDFAB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 71B51F35561E69E72A1804D6 /* Pods-Spark&Vesper-Spark&VesperUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -709,6 +897,7 @@
 		};
 		D0C5F3AE2E4BC037003DDFAB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A64A515E8F1796D6A468600C /* Pods-Spark&Vesper-Spark&VesperUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
